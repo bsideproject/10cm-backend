@@ -10,8 +10,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.bside.someday.oauth.filter.JwtAuthenticationFilter;
 import com.bside.someday.oauth.handler.CustomOAuth2SuccessHandler;
+import com.bside.someday.oauth.handler.JwtAccessDeniedHandler;
+import com.bside.someday.oauth.handler.JwtAuthenticationEntryPoint;
 import com.bside.someday.oauth.service.CustomOAuth2UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,6 +31,10 @@ public class SecurityConfig {
 	private final CustomOAuth2SuccessHandler customOAuth2SuccessHandler;
 	private final CustomOAuth2UserService customOAuth2UserService;
 
+	private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -37,7 +45,8 @@ public class SecurityConfig {
 		return (web -> web.ignoring()
 			.antMatchers("/swagger-ui/**")
 			.antMatchers("/favicon*/**")
-			.antMatchers("/resources/**"));
+			.antMatchers("/resources/**")
+		);
 	}
 
 	@Bean
@@ -53,15 +62,17 @@ public class SecurityConfig {
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
+			// FIXME: URL 권한 설정
 			.and()
 			.authorizeRequests()
-			.antMatchers("/api/**").authenticated()
-			.anyRequest().permitAll()
+			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
+			.antMatchers("/api/v1/auth/**").permitAll()
+			.anyRequest().authenticated()
 
-			// TODO. Exception 핸들링 추가
-			// .exceptionHandling()
-			// .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-			// .accessDeniedHandler(jwtAccessDeniedHandler)
+			.and()
+			.exceptionHandling()
+			.accessDeniedHandler(jwtAccessDeniedHandler)
+			.authenticationEntryPoint(jwtAuthenticationEntryPoint)
 
 			.and()
 			.oauth2Login()
@@ -71,6 +82,8 @@ public class SecurityConfig {
 			.and()
 			.successHandler(customOAuth2SuccessHandler)
 
-			.and().build();
+			.and()
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.build();
 	}
 }

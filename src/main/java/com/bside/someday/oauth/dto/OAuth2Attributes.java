@@ -1,4 +1,4 @@
-package com.bside.someday.oauth.service;
+package com.bside.someday.oauth.dto;
 
 import java.util.Map;
 
