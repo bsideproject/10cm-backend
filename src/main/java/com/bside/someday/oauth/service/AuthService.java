@@ -1,9 +1,12 @@
 package com.bside.someday.oauth.service;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.bside.someday.cache.token.TokenRedisCacheService;
+import com.bside.someday.common.util.CookieUtil;
 import com.bside.someday.error.exception.oauth.TokenExpiredException;
 import com.bside.someday.error.exception.oauth.TokenInvalidException;
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
@@ -20,8 +23,35 @@ public class AuthService {
 	private final JwtTokenProvider jwtTokenProvider;
 	private final UserRepository userRepository;
 	private final TokenRedisCacheService tokenRedisCacheService;
+	private final CookieUtil cookieUtil;
 
-	public TokenDto refresh(String refreshToken) {
+	public TokenDto refresh(HttpServletResponse response, String refreshToken) {
+
+		User user = getUserFromRefreshToken(refreshToken);
+
+		String newAccessToken = jwtTokenProvider.createAccessToken(user);
+		String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
+
+		tokenRedisCacheService.update(String.valueOf(user.getUserId()), newRefreshToken,
+			jwtTokenProvider.getRefreshTokenExpirationSecond());
+
+		cookieUtil.addAccessTokenResponseCookie(response, newAccessToken);
+		cookieUtil.addRefreshTokenResponseCookie(response, newRefreshToken);
+
+		return new TokenDto(newAccessToken, newRefreshToken);
+	}
+
+	public TokenDto access(HttpServletResponse response, String refreshToken) {
+
+		User user = getUserFromRefreshToken(refreshToken);
+
+		String newAccessToken = jwtTokenProvider.createAccessToken(user);
+
+		cookieUtil.addAccessTokenResponseCookie(response, newAccessToken);
+		return new TokenDto(newAccessToken, refreshToken);
+	}
+
+	private User getUserFromRefreshToken(String refreshToken) {
 
 		if (ObjectUtils.isEmpty(refreshToken)) {
 			throw new TokenInvalidException();
@@ -32,20 +62,13 @@ public class AuthService {
 
 		String storedToken = tokenRedisCacheService.get(userId);
 
-		 if(!jwtTokenProvider.validate(storedToken)) {
-			 throw new TokenExpiredException();
-		 }
+		if (!jwtTokenProvider.validate(storedToken)) {
+			throw new TokenExpiredException();
+		}
 
 		if (!refreshToken.equals(storedToken)) {
 			throw new TokenInvalidException();
 		}
-
-		String newAccessToken = jwtTokenProvider.createAccessToken(user);
-		String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
-
-		tokenRedisCacheService.update(String.valueOf(user.getUserId()), newRefreshToken,
-			jwtTokenProvider.getRefreshTokenExpirationSecond());
-
-		return new TokenDto(newAccessToken, newRefreshToken);
+		return user;
 	}
 }

@@ -1,5 +1,7 @@
 package com.bside.someday.oauth.web;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -23,12 +25,21 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthController {
 	private final AuthService authService;
 
-	@ApiOperation("refresh 토큰발급")
+	@ApiOperation("refresh 토큰 재발급")
 	@PostMapping("/refresh")
-	public ResponseEntity<TokenDto> refreshToken(
+	public ResponseEntity<TokenDto> refreshToken(HttpServletResponse response,
 		@RequestHeader(value = "refresh") String refreshToken
 	) {
-		TokenDto tokenDto = authService.refresh(refreshToken);
+		TokenDto tokenDto = authService.refresh(response, refreshToken);
+		return ResponseDto.ok(tokenDto);
+	}
+
+	@ApiOperation("access 토큰 재발급")
+	@PostMapping("/access")
+	public ResponseEntity<TokenDto> accessToken(HttpServletResponse response,
+		@RequestHeader(value = "refresh") String refreshToken
+	) {
+		TokenDto tokenDto = authService.access(response, refreshToken);
 		return ResponseDto.ok(tokenDto);
 	}
 
