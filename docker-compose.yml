@@ -12,7 +12,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysqlctn:3306/someday?autoReconnect=true&useSSL=false
 
-  mysqlcontainer:
+  mysqlctn:
     image: mysql:5.7
     container_name: mysqlctn
     volumes:
