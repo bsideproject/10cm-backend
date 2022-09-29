@@ -14,6 +14,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import com.bside.someday.error.dto.ErrorType;
+import com.bside.someday.error.exception.BusinessException;
+
 import io.jsonwebtoken.lang.Assert;
 
 public class CustomOauth2User implements OAuth2User {
@@ -31,11 +34,15 @@ public class CustomOauth2User implements OAuth2User {
 	public CustomOauth2User(Set<GrantedAuthority> authorities, Map<String, Object> attributes,
 		String nameAttributeKey) {
 
-		Assert.notEmpty(attributes, "empty attributes");
-		Assert.hasText(nameAttributeKey, "empty nameAttributeKey");
+		try {
+			Assert.notEmpty(attributes, "empty attributes");
+			Assert.hasText(nameAttributeKey, "empty nameAttributeKey");
 
-		if (!attributes.containsKey(nameAttributeKey)) {
-			throw new IllegalArgumentException(nameAttributeKey + " is not in attributes");
+			if (!attributes.containsKey(nameAttributeKey)) {
+				throw new IllegalArgumentException(nameAttributeKey + " is not in attributes");
+			}
+		} catch (IllegalArgumentException e) {
+			throw new BusinessException(e.getMessage(), ErrorType.UNEXPECTED_ERROR);
 		}
 
 		this.authorities = (authorities != null)

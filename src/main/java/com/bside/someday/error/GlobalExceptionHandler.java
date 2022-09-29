@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.bside.someday.error.dto.ErrorDto;
 import com.bside.someday.error.dto.ErrorType;
 import com.bside.someday.error.exception.BusinessException;
-import com.bside.someday.error.exception.oauth.AuthenticationEntryPointException;
+import com.bside.someday.error.exception.oauth.TokenExpiredException;
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
 import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 
@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler({AuthenticationEntryPointException.class, NotAllowAccessException.class,
+	@ExceptionHandler({TokenExpiredException.class, NotAllowAccessException.class,
 		UnAuthorizedException.class})
 	protected ResponseEntity<ErrorDto> handleAuthenticationException(final BusinessException e,
 		final HttpServletRequest request) {

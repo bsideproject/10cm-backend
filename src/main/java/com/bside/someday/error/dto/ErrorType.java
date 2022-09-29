@@ -10,7 +10,8 @@ import lombok.Getter;
 public enum ErrorType {
 
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "허용되지 않은 요청입니다.", "ATH001"),
-	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.", "ATH002"),
+	TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "만료된 토큰입니다.", "ATH002"),
+	TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.", "ATH003"),
 
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원정보가 존재하지 않습니다.", "USR001"),
 	UNEXPECTED_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생하였습니다.", "ERO001");
