@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  app:
+    image: springimg
+    container_name: springctn
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqlctn
+    links:
+      - "mysqlctn:mysqlctn"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqlctn:3306/someday?autoReconnect=true&useSSL=false
+
+  mysqlcontainer:
+    image: mysql:5.7
+    container_name: mysqlctn
+    volumes:
+      - /home/mysql/mysqldata:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=someday
+      - MYSQL_ROOT_HOST="%"
+    ports:
+      - "3306:3306"
+
+  redis:
+    image: redis:alpine
+    command: redis-server --port 6379
+    container_name: redis_boot
+    hostname: redis_boot
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    ports:
+      - "6379:6379"
+
