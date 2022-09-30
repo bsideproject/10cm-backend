@@ -48,7 +48,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
-// gradle build 시 plain.jar skip
+//  gradle build 시 plain.jar skip
 jar {
 	enabled = false
 }
