@@ -67,6 +67,10 @@ public class SecurityConfig {
 			.authorizeRequests()
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
+
+			// FIXME: 커밋 X
+			.antMatchers("/login").permitAll()
+
 			.anyRequest().authenticated()
 
 			.and()
