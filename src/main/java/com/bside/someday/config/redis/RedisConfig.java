@@ -27,27 +27,32 @@ import lombok.extern.slf4j.Slf4j;
 @Configuration
 @EnableCaching
 public class RedisConfig {
+
 	private final RedisProperties redisProperties;
 
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
-		log.info("Registered redisConnectionFactory");
+
+		log.info("redisConnectionFactory >>> {} {}", redisProperties.getHost(), redisProperties.getPort());
 		return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
 	}
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate() {
-		log.info("Registered redisTemplate");
+		log.info("redisTemplate");
+
 		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
+
 		return redisTemplate;
 	}
 
 	@Bean
-	public CacheManager webtoonCacheManager() {
-		log.info("Registered webtoonCacheManager");
+	public CacheManager somedayCacheManager() {
+		log.info("somedayCacheManager");
+
 		var stringSerializationPair = RedisSerializationContext
 			.SerializationPair.fromSerializer(new StringRedisSerializer());
 		var objectSerializationPair = RedisSerializationContext
@@ -66,9 +71,9 @@ public class RedisConfig {
 	@Getter
 	@RequiredArgsConstructor
 	enum CachingDuration {
+
 		DAY(ofDays(1L)),
-		HOUR(ofHours(1L)),
-		;
+		HOUR(ofHours(1L));
 
 		private final Duration duration;
 	}
