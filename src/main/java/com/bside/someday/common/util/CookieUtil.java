@@ -29,23 +29,24 @@ public class CookieUtil {
 	public void addRefreshTokenResponseCookie(HttpServletResponse response, String token) {
 		response.addHeader(SET_COOKIE, createRefreshTokenResponseCookie(token).toString());
 	}
+
 	public ResponseCookie createAccessTokenResponseCookie(String token) {
-		//TODO: secure 추가
+		// FIXME: 인증서 발급 후 secure 추가, cors 설정
 		return ResponseCookie.from(accessTokenName, token)
 			.path("/")
 			.httpOnly(true)
-			.sameSite("")
+			.sameSite("None")
 			.domain(cookieDomain)
 			.maxAge(accessTokenExpirationSecond / 1000)
 			.build();
 	}
 
 	public ResponseCookie createRefreshTokenResponseCookie(String token) {
-		//TODO: secure 추가
+		// FIXME: 인증서 발급 후 secure 추가, cors 설정
 		return ResponseCookie.from(refreshTokenName, token)
 			.path("/")
 			.httpOnly(true)
-			.sameSite("")
+			.sameSite("None")
 			.domain(cookieDomain)
 			.maxAge(refreshTokenExpirationSecond / 1000)
 			.build();
