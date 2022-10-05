@@ -7,10 +7,12 @@ services:
       - "8080:8080"
     depends_on:
       - mysqlctn
+      - redis
     links:
       - "mysqlctn:mysqlctn"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysqlctn:3306/someday?autoReconnect=true&useSSL=false
+      - "redis:redis"
+   # environment:
+   #   SPRING_DATASOURCE_URL: jdbc:mysql://mysqlctn:3306/someday?autoReconnect=true&useSSL=false
 
 
   mysqlctn:
