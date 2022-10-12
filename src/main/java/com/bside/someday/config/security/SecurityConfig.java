@@ -68,6 +68,9 @@ public class SecurityConfig {
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
 
+			// 테스트용
+			.antMatchers("/api/v1/place/**").permitAll()
+
 			// FIXME: 커밋 X
 			.antMatchers("/login").permitAll()
 
