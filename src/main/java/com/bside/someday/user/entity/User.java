@@ -35,7 +35,7 @@ public class User {
 	@Column(name = "email", length = 500)
 	private String email;
 
-	@Column(name = "nickname", length = 50)
+	@Column(name = "nickname", length = 200)
 	private String nickname;
 
 	@Column(name = "profile_image", length = 500)
