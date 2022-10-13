@@ -1,9 +1,9 @@
+
 package com.bside.someday.oauth.service;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import com.bside.someday.cache.token.TokenRedisCacheService;
 import com.bside.someday.common.util.CookieUtil;
@@ -53,7 +53,7 @@ public class AuthService {
 
 	private User getUserFromRefreshToken(String refreshToken) {
 
-		if (ObjectUtils.isEmpty(refreshToken)) {
+		if (!jwtTokenProvider.validate(refreshToken)) {
 			throw new TokenInvalidException();
 		}
 

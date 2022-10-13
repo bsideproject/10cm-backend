@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.bside.someday.oauth.CustomOauth2User;
 import com.bside.someday.oauth.dto.OAuth2Attributes;
@@ -57,6 +59,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
 	}
 
+	@Transactional
 	public Map<String, Object> saveOrUpdate(OAuth2Attributes attributes, String socialId, String registrationId) {
 
 		Map<String, Object> userMap = new HashMap<>();
@@ -67,14 +70,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			user.get().updateRegistrationId(registrationId.toUpperCase());
 			userMap.put("userId", user.get().getUserId());
 			userMap.put("email", user.get().getEmail());
-
 			return userMap;
 		}
 
-		//TODO: 닉네임 없는 경우 랜덤으로 생성
-		Random random = new Random();
-		random.setSeed(System.currentTimeMillis());
-		String nickname = String.format("IMSI%d", random.nextInt(100_000));
+		String nickname = getRandomNickName(attributes);
 
 		User saveUser = userRepository.save(
 			attributes.toEntity(socialId, registrationId, nickname));
@@ -92,5 +91,16 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			default:
 				throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
 		}
+	}
+
+	private String getRandomNickName(OAuth2Attributes attributes) {
+
+		if (attributes != null && StringUtils.hasText(attributes.getNickname())) {
+			return attributes.getNickname();
+		}
+
+		Random random = new Random();
+		random.setSeed(System.currentTimeMillis());
+		return String.format("USER%d", random.nextInt(100_000));
 	}
 }
