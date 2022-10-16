@@ -31,22 +31,22 @@ public class CookieUtil {
 	}
 
 	public ResponseCookie createAccessTokenResponseCookie(String token) {
-		// FIXME: 인증서 발급 후 secure 추가, cors 설정
 		return ResponseCookie.from(accessTokenName, token)
 			.path("/")
 			.httpOnly(true)
 			.sameSite("None")
+			.secure(true)
 			.domain(cookieDomain)
 			.maxAge(accessTokenExpirationSecond / 1000)
 			.build();
 	}
 
 	public ResponseCookie createRefreshTokenResponseCookie(String token) {
-		// FIXME: 인증서 발급 후 secure 추가, cors 설정
 		return ResponseCookie.from(refreshTokenName, token)
 			.path("/")
 			.httpOnly(true)
 			.sameSite("None")
+			.secure(true)
 			.domain(cookieDomain)
 			.maxAge(refreshTokenExpirationSecond / 1000)
 			.build();
