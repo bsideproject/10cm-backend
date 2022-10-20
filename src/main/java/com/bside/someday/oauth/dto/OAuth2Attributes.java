@@ -19,30 +19,31 @@ public class OAuth2Attributes {
 	private final String nameAttributeKey;
 	private final String oauthId;
 	private final String nickname;
+	private final String name;
 	private final String email;
 	private final String profileImage;
 
 	@Builder
 	public OAuth2Attributes(Map<String, Object> attributes, String nameAttributeKey, String oauthId, String nickname,
-		String email, String profileImage) {
+		String name, String email, String profileImage) {
 		this.attributes = attributes;
 		this.nameAttributeKey = nameAttributeKey;
 		this.oauthId = oauthId;
 		this.nickname = nickname;
+		this.name = name;
 		this.email = email;
 		this.profileImage = profileImage;
 	}
 
 	public static OAuth2Attributes of(String registrationId, String nameAttributeKey,
 		Map<String, Object> attributes) {
-		switch (registrationId) {
-			case "kakao":
-				return ofKakao(nameAttributeKey, attributes);
-			default:
-				throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
+		if ("kakao".equals(registrationId)) {
+			return ofKakao(nameAttributeKey, attributes);
 		}
+		throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
 	}
 
+	@SuppressWarnings("unchecked")
 	private static OAuth2Attributes ofKakao(String nameAttributeKey, Map<String, Object> attributes) {
 
 		Map<String, Object> account = (Map<String, Object>)attributes.get("kakao_account");
@@ -51,6 +52,7 @@ public class OAuth2Attributes {
 		return OAuth2Attributes.builder()
 			.oauthId(attributes.get(nameAttributeKey).toString())
 			.nickname((String)profile.get("nickname"))
+			.name((String)profile.get("name"))
 			.email((String)account.get("email"))
 			.attributes(attributes)
 			.nameAttributeKey(nameAttributeKey)

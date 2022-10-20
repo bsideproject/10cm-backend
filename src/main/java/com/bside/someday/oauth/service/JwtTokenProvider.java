@@ -1,5 +1,7 @@
 package com.bside.someday.oauth.service;
 
+import static com.bside.someday.oauth.filter.JwtAuthenticationFilter.*;
+
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,8 +16,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import com.bside.someday.error.exception.oauth.TokenInvalidException;
 import com.bside.someday.oauth.CustomOauth2User;
+import com.bside.someday.user.entity.Role;
 import com.bside.someday.user.entity.User;
 
 import io.jsonwebtoken.Claims;
@@ -49,9 +54,6 @@ public class JwtTokenProvider {
 			for (Cookie cookie : cookies) {
 				if (accessTokenName.equals(cookie.getName())) {
 					String accessToken = cookie.getValue();
-					if (accessToken == null) {
-						return null;
-					}
 					return accessToken;
 				}
 			}
@@ -65,7 +67,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder()
 			.setSubject(String.valueOf(oauth2User.getUserId()))
-			.claim("role", "default")
+			.claim("role", Role.USER)
 			.setIssuedAt(new Date())
 			.setExpiration(getExpiredDate(accessTokenExpirationSecond))
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)),
@@ -77,7 +79,7 @@ public class JwtTokenProvider {
 
 		return Jwts.builder()
 			.setSubject(String.valueOf(user.getUserId()))
-			.claim("role", "default")
+			.claim("role", Role.USER)
 			.setIssuedAt(new Date())
 			.setExpiration(getExpiredDate(accessTokenExpirationSecond))
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)),
@@ -110,6 +112,11 @@ public class JwtTokenProvider {
 	}
 
 	public boolean validate(String token) {
+
+		if (!StringUtils.hasText(token)) {
+			return false;
+		}
+
 		try {
 			return getClaims(token)
 				.getExpiration()
@@ -152,7 +159,25 @@ public class JwtTokenProvider {
 		return new Date(now.getTime() + expirationSecond);
 	}
 
+
+
 	public long getRefreshTokenExpirationSecond() {
 		return this.refreshTokenExpirationSecond;
 	}
+
+	public String resolveToken(String bearerHeader) {
+
+		if (!StringUtils.hasText(bearerHeader) || !bearerHeader.startsWith(BEARER_TOKEN_PREFIX)) {
+			throw new TokenInvalidException();
+		}
+
+		String accessToken = bearerHeader.substring(BEARER_TOKEN_PREFIX_LENGTH);
+
+		if (!validate(accessToken)) {
+			throw new TokenInvalidException();
+		}
+
+		return accessToken;
+	}
+
 }

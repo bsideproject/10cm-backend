@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.bside.someday.place.entity.BaseTimeEntity;
 import com.bside.someday.user.dto.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -21,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "`user`")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class User extends BaseTimeEntity {
 
 	@JsonIgnore
 	@Id
@@ -63,5 +64,12 @@ public class User {
 	public void updateRegistrationId(String socialType) {
 		this.socialType = SocialType.valueOf(socialType);
 	}
+
+	public User update(String nickname, String profileImage) {
+		this.nickname = nickname;
+		this.profileImage = profileImage;
+		return this;
+	}
+
 }
 
