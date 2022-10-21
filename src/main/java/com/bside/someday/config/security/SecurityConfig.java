@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.bside.someday.config.web.CorsConfig;
 import com.bside.someday.oauth.filter.JwtAuthenticationFilter;
 import com.bside.someday.oauth.handler.CustomOAuth2SuccessHandler;
 import com.bside.someday.oauth.handler.JwtAccessDeniedHandler;
@@ -35,6 +36,8 @@ public class SecurityConfig {
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+	private final CorsConfig corsConfig;
+
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -45,8 +48,7 @@ public class SecurityConfig {
 		return (web -> web.ignoring()
 			.antMatchers("/swagger-ui/**")
 			.antMatchers("/favicon*/**")
-			.antMatchers("/resources/**")
-		);
+			.antMatchers("/resources/**"));
 	}
 
 	@Bean
@@ -55,7 +57,12 @@ public class SecurityConfig {
 
 		return http
 
+			// h2-console, swagger-ui
 			.csrf().disable()
+			.headers().frameOptions().disable()
+
+
+			.and()
 			.httpBasic().disable()
 			.formLogin().disable()
 
@@ -65,15 +72,16 @@ public class SecurityConfig {
 			// FIXME: URL 권한 설정
 			.and()
 			.authorizeRequests()
+
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
+			.antMatchers("/api/v1/resources/**").permitAll()
+			.antMatchers("/login/**").permitAll()
 
 			// 테스트용
 			.antMatchers("/api/v1/place/**").permitAll()
 
-			// FIXME: 커밋 X
-			.antMatchers("/login").permitAll()
-
+			// 설정 값 이외 URL
 			.anyRequest().authenticated()
 
 			.and()
@@ -81,15 +89,17 @@ public class SecurityConfig {
 			.accessDeniedHandler(jwtAccessDeniedHandler)
 			.authenticationEntryPoint(jwtAuthenticationEntryPoint)
 
+			// OAuth2 로그인 이후 진입점 설정
 			.and()
 			.oauth2Login()
-			.userInfoEndpoint()
+			.userInfoEndpoint() // 로그인 성공 이후 사용자 정보 가져올 때 설정
 			.userService(customOAuth2UserService)
 
 			.and()
 			.successHandler(customOAuth2SuccessHandler)
 
 			.and()
+			.addFilter(corsConfig.corsFilter())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}

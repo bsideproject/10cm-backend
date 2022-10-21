@@ -13,6 +13,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebSession;
 
+import com.bside.someday.oauth.config.AuthUser;
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 
@@ -68,7 +69,8 @@ public class SwaggerConfig {
 				WebSession.class,
 				ServerHttpRequest.class,
 				ServerHttpResponse.class,
-				ServerWebExchange.class
+				ServerWebExchange.class,
+				AuthUser.class
 			)
 			.apiInfo(getApiInfo())
 			.produces(DEFAULT_PRODUCES_AND_CONSUMES)
@@ -76,7 +78,6 @@ public class SwaggerConfig {
 			.securityContexts(List.of(securityContext()))
 			.securitySchemes(List.of(new ApiKey("JWT", "Authorization", "header")))
 			.select()
-			.paths(PathSelectors.any())
 			.paths(PathSelectors.ant("/api/**"))
 			.build();
 	}
