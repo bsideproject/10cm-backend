@@ -30,7 +30,7 @@ public class StorageService {
 
 	private final StorageRepository storageRepository;
 
-	@Value("${file.resource.path:/api/v1/resource}")
+	@Value("${file.resources.path:/api/v1/resources}")
 	private String FILE_RESOURCE_URL;
 
 	@Value("${file.stored.path:/home}")

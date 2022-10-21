@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/api/v1/resource")
+@RequestMapping(value = "/api/v1/resources")
 public class StorageController {
 
 	private final StorageService storageService;
