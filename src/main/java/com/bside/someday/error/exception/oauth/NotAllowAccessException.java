@@ -9,6 +9,6 @@ public class NotAllowAccessException extends BusinessException {
 	private static final long serialVersionUID = -7304183691896008750L;
 
 	public NotAllowAccessException() {
-		super(UNAUTHORIZED);
+		super(NOT_ALLOW_ACCESS);
 	}
 }

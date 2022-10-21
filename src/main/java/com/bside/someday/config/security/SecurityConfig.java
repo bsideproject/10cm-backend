@@ -75,6 +75,7 @@ public class SecurityConfig {
 
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
+			.antMatchers("/api/v1/resources/**").permitAll()
 			.antMatchers("/login/**").permitAll()
 
 			// 테스트용

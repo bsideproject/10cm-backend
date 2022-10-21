@@ -7,15 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bside.someday.common.dto.ResponseDto;
-import com.bside.someday.file.service.FileService;
+import com.bside.someday.storage.service.StorageService;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.user.dto.UserProfileRequestDto;
@@ -35,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
 	private final UserService userService;
-	private final FileService fileService;
+	private final StorageService storageService;
 
 	@ApiOperation("회원 프로필 조회")
 	@GetMapping
@@ -53,7 +51,7 @@ public class UserController {
 		@RequestPart(value = "image", required = false) MultipartFile multipartFile) {
 
 		if (multipartFile != null) {
-			String url = fileService.upload(multipartFile);
+			String url = storageService.uploadFile(multipartFile).getUrl();
 			requestDto.setProfileImageUrl(url);
 		}
 
