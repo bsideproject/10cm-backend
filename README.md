@@ -4,12 +4,13 @@
 ## 🚀프로젝트 사용기술
 * Spring Boot
 * Java
-* MySQL
 * JPA
-* Gradle
+* MySQL
 * Redis
-* Naver Cloud Platform
+* Gradle
 * Docker
+* Jenkins
+* Naver Cloud Platform
 
 ## 🚀프로젝트 구조
 <img width="939" alt="스크린샷 2022-10-13 오전 11 53 51" src="https://user-images.githubusercontent.com/99889721/195488313-c1adf1c2-d0ac-4e06-bde1-e79633755e88.png">
