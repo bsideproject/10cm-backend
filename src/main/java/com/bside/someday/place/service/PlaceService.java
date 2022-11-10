@@ -10,6 +10,9 @@ import com.bside.someday.place.repository.PlaceTagRepository;
 import com.bside.someday.place.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,10 +57,12 @@ public class PlaceService {
         placeRepository.deleteById(placeId);
     }
 
-    public List<PlaceResponseDto> getAllPlace() {
-        List<Place> placeList = placeRepository.findAll();
+    public List<PlaceResponseDto> getAllPlace(Pageable pageable) {
+//        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<Place> placePage = placeRepository.findAll(pageable);
         List<PlaceResponseDto> result = new ArrayList<>();
-        for(Place place : placeList){
+        for(Place place : placePage){
             List<String> tagList = getTagList(place.getId());
             result.add(PlaceResponseDto.builder()
                     .place(place)

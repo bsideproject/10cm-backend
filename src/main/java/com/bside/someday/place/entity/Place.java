@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 
 @ToString
 @Getter
@@ -21,25 +22,26 @@ public class Place extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     private String name;
     private String address;
     private String addressDetail;
-    private String image;
     private String phone;
-    private String memo;
+    private String description;
+    @NotNull
     private String longitude;
+    @NotNull
     private String latitude;
 
     @Builder
-    public Place(Long id, String name, String address, String addressDetail, String image, String phone, String memo,
+    public Place(Long id, String name, String address, String addressDetail, String phone, String description,
                  String longitude, String latitude){
         this.id = id;
         this.name = name;
         this.address = address;
         this.addressDetail = addressDetail;
-        this.image = image;
         this.phone = phone;
-        this.memo = memo;
+        this.description = description;
         this.longitude = longitude;
         this.latitude = latitude;
     }

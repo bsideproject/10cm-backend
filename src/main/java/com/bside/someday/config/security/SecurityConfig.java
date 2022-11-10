@@ -79,7 +79,7 @@ public class SecurityConfig {
 			.antMatchers("/login/**").permitAll()
 
 			// 테스트용
-			.antMatchers("/api/v1/place/**").permitAll()
+//			.antMatchers("/api/v1/place/**").permitAll()
 
 			// 설정 값 이외 URL
 			.anyRequest().authenticated()
