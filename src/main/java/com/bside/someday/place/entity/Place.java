@@ -1,15 +1,13 @@
 package com.bside.someday.place.entity;
 
 import com.bside.someday.place.dto.PlaceRequestDto;
+import com.bside.someday.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @ToString
@@ -22,7 +20,11 @@ public class Place extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
+
+    @NotNull(message = "name 필드는 필수입니다.")
     private String name;
     private String address;
     private String addressDetail;
@@ -34,9 +36,10 @@ public class Place extends BaseTimeEntity {
     private String latitude;
 
     @Builder
-    public Place(Long id, String name, String address, String addressDetail, String phone, String description,
+    public Place(Long id, User user, String name, String address, String addressDetail, String phone, String description,
                  String longitude, String latitude){
         this.id = id;
+        this.user = user;
         this.name = name;
         this.address = address;
         this.addressDetail = addressDetail;
