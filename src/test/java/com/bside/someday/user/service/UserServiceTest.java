@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
+import com.bside.someday.user.dto.SocialType;
 import com.bside.someday.user.dto.UserProfileRequestDto;
 import com.bside.someday.user.dto.UserProfileResponseDto;
 import com.bside.someday.user.entity.User;
@@ -40,7 +41,7 @@ class UserServiceTest {
 			.name("테스트")
 			.nickname("닉네임")
 			.socialId("adsfasdfi")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user1));
@@ -64,7 +65,7 @@ class UserServiceTest {
 			.name("테스트")
 			.nickname("닉네임")
 			.socialId("adsfasdfi")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		String afterNickname = "변경후닉네임";
@@ -75,7 +76,7 @@ class UserServiceTest {
 			.name("테스트")
 			.nickname(afterNickname)
 			.socialId("adsfasdfi")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.profileImage(afterImageProfile)
 			.build();
 
@@ -114,7 +115,7 @@ class UserServiceTest {
 			.name("테스트")
 			.nickname("닉네임")
 			.socialId("adsfasdfi")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		when(userRepository.findById(1L)).thenReturn(Optional.of(user1));

@@ -13,7 +13,7 @@ public class CustomLogoutHandler implements LogoutHandler {
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-		//TODO: LogoutHandler 구현 필요
+		//TODO: LogoutHandler 구현
 		log.info("CustomLogoutHandler.logout");
 	}
 }

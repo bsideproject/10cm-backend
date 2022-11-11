@@ -37,7 +37,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 		OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
 
+		// 로그인 서비스 구분 ID
 		String registrationId = userRequest.getClientRegistration().getRegistrationId().toLowerCase();
+
+		// OAuth2 로그인 필드 값
 		String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails().getUserInfoEndpoint()
 			.getUserNameAttributeName();
 
@@ -85,12 +88,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 	}
 
 	private String getSocialUniqueId(String id, String registrationId) {
-		switch (registrationId) {
-			case "kakao":
-				return id;
-			default:
-				throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
+		if ("kakao".equals(registrationId)) {
+			return id;
 		}
+		throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
 	}
 
 	private String getRandomNickName(OAuth2Attributes attributes) {

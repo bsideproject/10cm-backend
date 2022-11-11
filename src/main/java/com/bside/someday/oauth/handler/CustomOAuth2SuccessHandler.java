@@ -49,6 +49,7 @@ public class CustomOAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHa
 		cookieUtil.addRefreshTokenResponseCookie(response, refreshToken);
 
 		String targetUrl = UriComponentsBuilder.fromUriString(redirectUrl)
+			// JWT Query Param 전달
 			.queryParam(accessTokenName, accessToken)
 			.queryParam(refreshTokenName, refreshToken)
 			.build().toUriString();

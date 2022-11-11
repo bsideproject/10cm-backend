@@ -101,8 +101,6 @@ class StorageControllerTest {
 
 		//when
 		String fileName = storageService.uploadFile(file1).getName();
-		assertThat(storageService.findOneByName(fileName).getName()).isEqualTo(fileName);
-
 		storageService.deleteFile(null, fileName);
 
 		//then

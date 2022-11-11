@@ -18,6 +18,9 @@ public enum ErrorType {
 
 	FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.", "FIL001"),
 	FILE_UPLOAD_FAIL(HttpStatus.BAD_GATEWAY, "파일 업로드 중 오류가 발생하였습니다.", "FIL002"),
+
+	TRIP_NOT_FOUND(HttpStatus.NOT_FOUND, "여행정보가 존재하지 않습니다.", "TRP001"),
+	TRIP_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "장소가 존재하지 않습니다.", "TRP002"),
 	;
 
 

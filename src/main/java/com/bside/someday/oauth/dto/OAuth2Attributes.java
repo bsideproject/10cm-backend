@@ -2,6 +2,7 @@ package com.bside.someday.oauth.dto;
 
 import java.util.Map;
 
+import com.bside.someday.user.dto.SocialType;
 import com.bside.someday.user.entity.User;
 
 import lombok.Builder;
@@ -64,7 +65,7 @@ public class OAuth2Attributes {
 		return User.builder()
 			.email(email)
 			.socialId(socialId)
-			.socialType(registrationId)
+			.socialType(SocialType.valueOf(registrationId.toUpperCase()))
 			.nickname(nickname)
 			.build();
 	}

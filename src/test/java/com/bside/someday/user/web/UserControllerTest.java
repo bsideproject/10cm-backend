@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
 import com.bside.someday.oauth.service.JwtTokenProvider;
+import com.bside.someday.user.dto.SocialType;
 import com.bside.someday.user.dto.UserProfileRequestDto;
 import com.bside.someday.user.entity.User;
 import com.bside.someday.user.repository.UserRepository;
@@ -56,7 +57,7 @@ class UserControllerTest {
 			.nickname("nicknameTest")
 			.profileImage("")
 			.socialId("sfadfadasdasdf")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		//when
@@ -83,7 +84,7 @@ class UserControllerTest {
 			.nickname("beforeNickname")
 			.profileImage("")
 			.socialId("asdfadfadsf")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		String accessToken = jwtTokenProvider.createAccessToken(userRepository.save(user1));
@@ -121,7 +122,7 @@ class UserControllerTest {
 			.nickname("dsfsdf")
 			.profileImage("")
 			.socialId("123123")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		//when

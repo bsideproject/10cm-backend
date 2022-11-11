@@ -43,5 +43,12 @@ public class AuthController {
 		return ResponseDto.ok(tokenDto);
 	}
 
-	//TODO: 로그아웃 기능 구현 필요
+	@ApiOperation("로그아웃")
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(@RequestHeader(value="Authorization") String bearerHeader) {
+
+		authService.logout(bearerHeader);
+
+		return ResponseDto.noContent();
+	}
 }
