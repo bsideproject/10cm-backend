@@ -62,13 +62,14 @@ public class PlaceRequestDto {
 //    @Builder
 //    public PlaceRequestDto(String name, String address, String addressDetail,
 //                           String phone, String[] tag, String description,
-//                           String latitude, String longitude) {
+//                           Long imageId, String latitude, String longitude) {
 //        this.name = name;
 //        this.address = address;
 //        this.addressDetail = addressDetail;
 //        this.phone = phone;
 //        this.tag = tag;
 //        this.description = description;
+//        this.imageId = imageId;
 //        this.latitude = latitude;
 //        this.longitude = longitude;
 //    }
