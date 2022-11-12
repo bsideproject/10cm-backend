@@ -1,6 +1,7 @@
 package com.bside.someday.place.entity;
 
 import com.bside.someday.place.dto.PlaceRequestDto;
+import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,9 +36,11 @@ public class Place extends BaseTimeEntity {
     @NotNull
     private String latitude;
 
+    private Long imageId;
+
     @Builder
     public Place(Long id, User user, String name, String address, String addressDetail, String phone, String description,
-                 String longitude, String latitude){
+                 String longitude, String latitude, Long imageId){
         this.id = id;
         this.user = user;
         this.name = name;
@@ -47,6 +50,7 @@ public class Place extends BaseTimeEntity {
         this.description = description;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.imageId = imageId;
     }
 
 }
