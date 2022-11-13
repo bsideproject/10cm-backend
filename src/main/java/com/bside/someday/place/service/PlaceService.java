@@ -123,19 +123,21 @@ public class PlaceService {
     private void addTag(PlaceRequestDto placeRequestDto, Long placeId) {
         // 태그가 이미 존재하는지 체크
         String[] tagArr = placeRequestDto.getTag();
-        for(String tagName : tagArr) {
-            Optional<Tag> tag = tagRepository.findByName(tagName);
-            log.info("tagName exists check {} {}", tagName, tag.isPresent());
-            Long tagId = 0L;
-            if(!tag.isPresent()) { // 존재하지 않는다면
-                //tag 추가
-                tagId = tagRepository.save(new Tag(tagName)).getId();
+        if(tagArr != null) {
+            for (String tagName : tagArr) {
+                Optional<Tag> tag = tagRepository.findByName(tagName);
+                log.info("tagName exists check {} {}", tagName, tag.isPresent());
+                Long tagId = 0L;
+                if (!tag.isPresent()) { // 존재하지 않는다면
+                    //tag 추가
+                    tagId = tagRepository.save(new Tag(tagName)).getId();
 
-            }else { // 존재한다면
-                tagId = tag.get().getId();
+                } else { // 존재한다면
+                    tagId = tag.get().getId();
+                }
+                //place_tag 추가
+                placeTagRepository.save(new PlaceTag(placeId, tagId));
             }
-            //place_tag 추가
-            placeTagRepository.save(new PlaceTag(placeId, tagId));
         }
     }
 }
