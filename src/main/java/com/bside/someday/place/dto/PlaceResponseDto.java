@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class PlaceResponseDto {
-    private String name;
     private String address;
     private String addressDetail;
     private String phone;
@@ -23,7 +22,6 @@ public class PlaceResponseDto {
 
     @Builder
     public PlaceResponseDto(Place place, String[] tag) {
-        this.name = place.getName();
         this.address = place.getAddress();
         this.addressDetail = place.getAddressDetail();
         this.phone = place.getPhone();
