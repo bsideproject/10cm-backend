@@ -25,6 +25,8 @@ public class Place extends BaseTimeEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
+    @NotNull(message = "name 필드는 필수입니다.")
+    private String name;
     private String address;
     private String addressDetail;
     private String phone;
@@ -37,10 +39,11 @@ public class Place extends BaseTimeEntity {
     private Long imageId;
 
     @Builder
-    public Place(Long id, User user, String address, String addressDetail, String phone, String description,
+    public Place(Long id, User user, String name, String address, String addressDetail, String phone, String description,
                  String longitude, String latitude, Long imageId){
         this.id = id;
         this.user = user;
+        this.name = name;
         this.address = address;
         this.addressDetail = addressDetail;
         this.phone = phone;
