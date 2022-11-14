@@ -1,4 +1,4 @@
-package com.bside.someday.storage.exception;
+package com.bside.someday.error.exception.storage;
 
 import static com.bside.someday.error.dto.ErrorType.*;
 
