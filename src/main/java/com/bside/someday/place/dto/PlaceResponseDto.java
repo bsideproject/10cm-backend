@@ -9,45 +9,43 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 public class PlaceResponseDto {
-    private String name;
     private String address;
     private String addressDetail;
-    private String image;
     private String phone;
     private String[] tag;
-    private String memo;
+    private String description;
     private String longitude;
     private String latitude;
+    private Long imageId;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
     @Builder
     public PlaceResponseDto(Place place, String[] tag) {
-        this.name = place.getName();
         this.address = place.getAddress();
         this.addressDetail = place.getAddressDetail();
-        this.image = place.getImage();
         this.phone = place.getPhone();
         this.tag = tag;
-        this.memo = place.getMemo();
+        this.description = place.getDescription();
         this.longitude = place.getLongitude();
         this.latitude = place.getLatitude();
+        this.imageId = place.getImageId();
         this.createdDate = place.getCreatedDate();
         this.modifiedDate = place.getModifiedDate();
     }
 //    @Builder
-//    public PlaceResponseDto(String name, String address, String addressDetail, String image, String phone,
-//                            String[] tag, String memo, String longitude, String latitude,
-//                            LocalDateTime createdDate, LocalDateTime modifiedDate) {
+//    public PlaceResponseDto(String name, String address, String addressDetail, String phone,
+//                            String[] tag, String description, String longitude, String latitude,
+//                            Long imageId, LocalDateTime createdDate, LocalDateTime modifiedDate) {
 //        this.name = name;
 //        this.address = address;
 //        this.addressDetail = addressDetail;
-//        this.image = image;
 //        this.phone = phone;
 //        this.tag = tag;
-//        this.memo = memo;
+//        this.description = description;
 //        this.longitude = longitude;
 //        this.latitude = latitude;
+//        this.imageId = imageId;
 //        this.createdDate = createdDate;
 //        this.modifiedDate = modifiedDate;
 //    }
