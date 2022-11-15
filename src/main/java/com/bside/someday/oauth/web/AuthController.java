@@ -17,7 +17,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api("Auth API")
+@Api(tags = "Auth API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -43,5 +43,12 @@ public class AuthController {
 		return ResponseDto.ok(tokenDto);
 	}
 
-	//TODO: 로그아웃 기능 구현 필요
+	@ApiOperation("로그아웃")
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(@RequestHeader(value="Authorization") String bearerHeader) {
+
+		authService.logout(bearerHeader);
+
+		return ResponseDto.noContent();
+	}
 }

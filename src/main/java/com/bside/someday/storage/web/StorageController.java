@@ -40,7 +40,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api("Storage API")
+@Api(tags = "Storage API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor

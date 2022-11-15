@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Api("Auth API")
+@Api(tags = "User API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor

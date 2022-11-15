@@ -31,7 +31,7 @@ class JwtTokenProviderTest {
 		// given
 		User user = User.builder()
 			.userId(3L)
-			.socialType(SocialType.KAKAO.getProvideServer())
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		// when
@@ -49,7 +49,7 @@ class JwtTokenProviderTest {
 		// given
 		User user = User.builder()
 			.userId(3L)
-			.socialType(SocialType.KAKAO.getProvideServer())
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		// when

@@ -51,14 +51,14 @@ public class User extends BaseTimeEntity {
 
 	@Builder
 	public User(Long userId, String name, String email, String nickname, String profileImage, String socialId,
-		String socialType) {
+		SocialType socialType) {
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
 		this.nickname = nickname;
 		this.profileImage = profileImage;
 		this.socialId = socialId;
-		this.socialType = SocialType.valueOf(socialType.toUpperCase());
+		this.socialType = socialType;
 	}
 
 	public void updateRegistrationId(String socialType) {

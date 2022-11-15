@@ -33,19 +33,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
 
-		//TODO: path 별 처리
-		String path = request.getServletPath();
-
-		//FIXME: 토큰 전송 방법
-
-		// 토큰은 헤더로 전송
+		// 토큰 헤더로 받음
 		String token = resolveToken(request);
-		// 쿠키에서..?
+
+		// 토큰 쿠키로 받음
 		// String token = jwtTokenProvider.getJwtToken(request);
 
 		//TODO: JWT 파싱 exception handling 구현 필요
 
-		if (StringUtils.hasText(token) && jwtTokenProvider.validate(token)) {
+		if (jwtTokenProvider.validate(token)) {
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
@@ -60,4 +56,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 		return null;
 	}
+
 }

@@ -69,13 +69,13 @@ public class SecurityConfig {
 			.sessionManagement()
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-			// FIXME: URL 권한 설정
 			.and()
 			.authorizeRequests()
 
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
 			.antMatchers("/api/v1/resources/**").permitAll()
+			.antMatchers("/api/v1/guest/**").permitAll()
 			.antMatchers("/login/**").permitAll()
 
 			// 테스트용

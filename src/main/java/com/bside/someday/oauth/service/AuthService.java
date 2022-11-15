@@ -1,9 +1,11 @@
 
 package com.bside.someday.oauth.service;
 
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bside.someday.cache.token.TokenRedisCacheService;
 import com.bside.someday.common.util.CookieUtil;
@@ -70,5 +72,20 @@ public class AuthService {
 			throw new TokenInvalidException();
 		}
 		return user;
+	}
+
+	@Transactional
+	public void logout(String bearerHeader) {
+
+		String accessToken = jwtTokenProvider.resolveToken(bearerHeader);
+
+		Long userId = jwtTokenProvider.getUserId(accessToken);
+
+		if (tokenRedisCacheService.get(userId) != null) {
+			tokenRedisCacheService.delete(userId);
+		}
+
+		// TODO: accessToken 인증되지 않도록 추가 구현
+
 	}
 }
