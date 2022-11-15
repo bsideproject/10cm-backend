@@ -25,6 +25,7 @@ import com.bside.someday.error.exception.storage.FileNotFoundException;
 import com.bside.someday.oauth.service.JwtTokenProvider;
 import com.bside.someday.storage.repository.StorageRepository;
 import com.bside.someday.storage.service.StorageService;
+import com.bside.someday.user.dto.SocialType;
 import com.bside.someday.user.entity.User;
 import com.bside.someday.user.repository.UserRepository;
 
@@ -61,7 +62,7 @@ class StorageControllerTest {
 			.nickname("dsfsdf")
 			.profileImage("")
 			.socialId("123123")
-			.socialType("kakao")
+			.socialType(SocialType.KAKAO)
 			.build();
 
 		accessToken = jwtTokenProvider.createAccessToken(userRepository.save(user1));
