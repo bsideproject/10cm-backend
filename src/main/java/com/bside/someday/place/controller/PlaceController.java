@@ -3,10 +3,7 @@ package com.bside.someday.place.controller;
 import com.bside.someday.error.exception.InvalidParameterException;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
-import com.bside.someday.place.dto.PlaceListResponseDto;
-import com.bside.someday.place.dto.PlaceRequestDto;
-import com.bside.someday.place.dto.PlaceResponseDto;
-import com.bside.someday.place.dto.ResponseDto;
+import com.bside.someday.place.dto.*;
 import com.bside.someday.place.service.PlaceService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -41,9 +38,9 @@ public class PlaceController {
         if(bindingResult.hasErrors()) {
             throw new InvalidParameterException(bindingResult);
         }
-        placeService.addPlace(placeRequestDto, userInfo);
+        Long placeId = placeService.addPlace(placeRequestDto, userInfo);
 
-        return ResponseEntity.ok().body(new ResponseDto());
+        return ResponseEntity.ok().body(new PlaceIdResponseDto(placeId));
     }
 
     @ApiOperation("장소 조회")

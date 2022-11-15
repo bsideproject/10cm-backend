@@ -16,8 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
 import com.bside.someday.storage.entity.ImageData;
-import com.bside.someday.storage.exception.FileNotFoundException;
-import com.bside.someday.storage.exception.FileUploadFailException;
+import com.bside.someday.error.exception.storage.FileNotFoundException;
+import com.bside.someday.error.exception.storage.FileUploadFailException;
 import com.bside.someday.storage.repository.StorageRepository;
 
 import lombok.RequiredArgsConstructor;

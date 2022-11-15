@@ -37,7 +37,7 @@ public class PlaceService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void addPlace(PlaceRequestDto placeRequestDto, UserInfo userInfo) {
+    public Long addPlace(PlaceRequestDto placeRequestDto, UserInfo userInfo) {
 
         placeRequestDto.addUser(getUser(userInfo));
         //place 추가
@@ -45,6 +45,7 @@ public class PlaceService {
 
         // tag 추가
         addTag(placeRequestDto, placeId);
+        return placeId;
     }
 
     public PlaceResponseDto getPlace(Long placeId, UserInfo userInfo) {

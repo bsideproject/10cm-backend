@@ -13,6 +13,8 @@ import javax.validation.constraints.NotNull;
 @ToString
 @Getter
 public class PlaceRequestDto {
+    @NotNull(message = "name 필드는 필수입니다.")
+    private String name;
     private String address;
     private String addressDetail;
     private String phone;
@@ -30,6 +32,7 @@ public class PlaceRequestDto {
 
     public Place toEntity() {
         return Place.builder()
+                .name(name)
                 .address(address)
                 .addressDetail(addressDetail)
                 .phone(phone)
@@ -44,6 +47,7 @@ public class PlaceRequestDto {
     public Place toEntity(Long id) {
         return Place.builder()
                 .id(id)
+                .name(name)
                 .address(address)
                 .addressDetail(addressDetail)
                 .phone(phone)
