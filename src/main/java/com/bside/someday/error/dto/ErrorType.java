@@ -24,6 +24,7 @@ public enum ErrorType {
 
 	TRIP_NOT_FOUND(HttpStatus.NOT_FOUND, "여행정보가 존재하지 않습니다.", "TRP001"),
 	TRIP_PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "장소가 존재하지 않습니다.", "TRP002"),
+	TRIP_INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다.", "TRP003"),
 	;
 
 

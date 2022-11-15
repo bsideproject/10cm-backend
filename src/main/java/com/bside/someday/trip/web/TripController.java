@@ -2,6 +2,8 @@ package com.bside.someday.trip.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +50,8 @@ public class TripController {
 
 	@ApiOperation("여행 등록")
 	@PostMapping
-	public ResponseEntity<?> saveTrip(@AuthUser UserInfo userInfo, @RequestBody TripDetailRequestDto requestDto) {
+	public ResponseEntity<?> saveTrip(@AuthUser UserInfo userInfo,
+		@Valid @RequestBody TripDetailRequestDto requestDto) {
 		return ResponseDto.created(tripService.save(userInfo.getUserId(), requestDto));
 	}
 
@@ -61,7 +64,7 @@ public class TripController {
 	@ApiOperation("여행 상세 수정")
 	@PutMapping("/{tripId}")
 	public ResponseEntity<?> updateTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId,
-		@RequestBody TripDetailRequestDto requestDto) {
+		@Valid @RequestBody TripDetailRequestDto requestDto) {
 		return ResponseDto.ok(tripService.update(userInfo.getUserId(), tripId, requestDto));
 	}
 

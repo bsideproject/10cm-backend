@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
+import com.bside.someday.error.exception.trip.TripInvalidParameterException;
+import com.bside.someday.error.exception.trip.TripPlaceNotFoundException;
 import com.bside.someday.place.entity.Place;
 import com.bside.someday.place.repository.PlaceRepository;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
@@ -60,8 +62,6 @@ class TripServiceTest {
 
 	/**
 	 * 유저 테스트 데이터 생성
-	 * @param userId
-	 * @return
 	 */
 	private User createTestUser(Long userId) {
 		return User.builder()
@@ -72,27 +72,33 @@ class TripServiceTest {
 			.build();
 	}
 
+	private long nextPlaceId = 1L;
+
+	/**
+	 * 장소 테스트 데이터 생성
+	 */
+	private Place createTestPlace() {
+		return Place.builder()
+			.id(nextPlaceId++)
+			.name("장소테스트1")
+			.address("장소상세1")
+			.addressDetail("주소상세1")
+			.latitude("1")
+			.longitude("1")
+			.build();
+	}
+
 	/**
 	 * 여행 테스트 데이터 생성
-	 * @param user
-	 * @return
 	 */
 	private Trip createTestTrip(Long tripId, User user) {
 		List<TripEntry> tripEntries = new ArrayList<>();
 
 		for (int i = 0; i < 5; i++) {
 
-			Place place = Place.builder()
-				.name("장소테스트1")
-				.address("장소상세1")
-				.addressDetail("주소상세1")
-				.latitude("1")
-				.longitude("1")
-				.build();
-
 			tripEntries.add(
 				TripEntry.builder()
-					.place(place)
+					.place(createTestPlace())
 					.visitDate(LocalDate.of(2022, 10, 28))
 					.build());
 		}
@@ -109,27 +115,31 @@ class TripServiceTest {
 		return Trip.createTrip(trip, user, tripEntries);
 	}
 
+	private User user;
+
 	@BeforeEach
 	void setup() {
 		MockitoAnnotations.initMocks(this);
 
 		tripService = new TripService(tripRepository, tripDetailRepository, placeRepository, userService);
+
+		user = createTestUser(1L);
 	}
 
 	@Test
 	void 여행_등록_성공() {
 
 		//given
-		User user = createTestUser(1L);
+		Place place = createTestPlace();
 
 		List<TripPlaceRequestDto> placeList = new ArrayList<>();
-		placeList.add(new TripPlaceRequestDto(null, 1, "2022-10-28"));
+		placeList.add(new TripPlaceRequestDto(place.getId(), 1, "2022-10-28"));
 		TripDetailRequestDto request = new TripDetailRequestDto(1L, "여행1", "여행메모", "2022-10-28", "2022-10-29", "N",
 			placeList);
 
-		when(userService.findOneById(1L)).thenReturn(user);
+		when(userService.findOneById(user.getUserId())).thenReturn(user);
 		when(tripRepository.save(any())).thenReturn(request.toEntity());
-		when(tripDetailRepository.save(any())).thenReturn(placeList.get(0).toTripEntity(null));
+		when(placeRepository.findById(place.getId())).thenReturn(Optional.of(place));
 
 		//when
 		Long tripId = tripService.save(user.getUserId(), request);
@@ -139,14 +149,55 @@ class TripServiceTest {
 	}
 
 	@Test
+	void 여행_등록_실패_장소누락() {
+
+		//given
+		Place place = createTestPlace();
+		Long noPlaceId = 999L;
+		List<TripPlaceRequestDto> placeList = new ArrayList<>();
+		placeList.add(new TripPlaceRequestDto(place.getId(), 1, "2022-10-28"));
+		placeList.add(new TripPlaceRequestDto(noPlaceId, 2, "2022-10-28"));
+		TripDetailRequestDto request = new TripDetailRequestDto(1L, "여행1", "여행메모", "2022-10-28", "2022-10-29", "N",
+			placeList);
+
+		//when
+		when(userService.findOneById(user.getUserId())).thenReturn(user);
+		when(placeRepository.findById(place.getId())).thenReturn(Optional.of(place));
+		when(placeRepository.findById(noPlaceId)).thenReturn(Optional.empty());
+
+		//then
+		assertThrows(TripPlaceNotFoundException.class,
+			() -> tripService.save(user.getUserId(), request));
+
+	}
+
+	@Test
+	void 여행_등록_실패_시작종료일() {
+
+		//given
+		Place place = createTestPlace();
+		List<TripPlaceRequestDto> placeList = new ArrayList<>();
+		placeList.add(new TripPlaceRequestDto(place.getId(), 1, "2022-10-28"));
+		TripDetailRequestDto request = new TripDetailRequestDto(1L, "여행1", "여행메모", "2022-10-29", "2022-10-28", "N",
+			placeList);
+
+		//when
+		when(userService.findOneById(user.getUserId())).thenReturn(user);
+
+		//then
+		assertThrows(TripInvalidParameterException.class,
+			() -> tripService.save(user.getUserId(), request));
+
+	}
+
+	@Test
 	void 여행_목록조회_성공() {
 
 		//given
 		PageRequest request = TripRequestDto.of(1, 10);
-		User user = createTestUser(1L);
 		List<Trip> tripList = new ArrayList<>();
 		for (int i = 0; i < 15; i++) {
-			tripList.add(createTestTrip(Long.valueOf(i), user));
+			tripList.add(createTestTrip((long)i, user));
 		}
 		Page<Trip> tripPage = new PageImpl<>(tripList, PageRequest.of(request.getPageNumber(), request.getPageSize()), tripList.size());
 		when(tripRepository.findAllByUserId(user.getUserId(), request)).thenReturn(
@@ -165,11 +216,10 @@ class TripServiceTest {
 	void 여행_상세조회_성공() {
 
 		//given
-		User user = createTestUser(1L);
 		Trip trip = createTestTrip(1L, user);
 
 		when(tripRepository.findById(trip.getTripId())).thenReturn(Optional.of(trip));
-		when(userService.findOneById(1L)).thenReturn(user);
+		when(userService.findOneById(user.getUserId())).thenReturn(user);
 
 		//when
 		TripDetailResponseDto response = tripService.getTrip(user.getUserId(), trip.getTripId());
@@ -180,14 +230,13 @@ class TripServiceTest {
 	}
 
 	@Test
-	void 여행_상세조회_권한없음_예외() {
+	void 여행_상세조회_실패_권한없음() {
 
 		//given
-		User user1 = createTestUser(1L);
 		User user2 = createTestUser(2L);
-		Trip trip = createTestTrip(1L, user1);
+		Trip trip = createTestTrip(1L, user);
 		when(tripRepository.findById(trip.getTripId())).thenReturn(Optional.of(trip));
-		when(userService.findOneById(2L)).thenReturn(user2);
+		when(userService.findOneById(user2.getUserId())).thenReturn(user2);
 
 		//when
 		final RuntimeException exception = assertThrows(RuntimeException.class,

@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import com.bside.someday.common.entity.BaseEntity;
+import com.bside.someday.error.exception.trip.TripInvalidParameterException;
 import com.bside.someday.user.entity.User;
 
 import lombok.AccessLevel;
@@ -33,7 +34,7 @@ public class Trip extends BaseEntity {
 	private Long tripId;
 
 	@OneToOne
-	@JoinColumn(name = "userId")
+	@JoinColumn(name = "user_id")
 	private User user;
 
 	@Column(length = 300)
@@ -91,6 +92,10 @@ public class Trip extends BaseEntity {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.shareYn = shareYn;
+
+		if (startDate.isAfter(endDate)) {
+			throw new TripInvalidParameterException("시작일이 종료일보다 클 수 없습니다.");
+		}
 	}
 }
 

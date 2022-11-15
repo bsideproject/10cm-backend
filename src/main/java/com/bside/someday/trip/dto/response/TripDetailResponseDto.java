@@ -1,6 +1,7 @@
 package com.bside.someday.trip.dto.response;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,8 @@ public class TripDetailResponseDto {
 	private final LocalDate endDate;
 
 	private final String shareYn;
-	private List<TripPlaceResponseDto> placeList;
+	private List<TripPlaceResponseDto> placeList = new ArrayList<>();
+
 
 	public TripDetailResponseDto(Trip trip, List<TripEntry> tripEntryList) {
 
@@ -33,6 +35,7 @@ public class TripDetailResponseDto {
 			(TripEntry tripEntry) -> new TripPlaceResponseDto(tripEntry, tripEntry.getPlace())).collect(
 			Collectors.toList());
 	}
+
 	public TripDetailResponseDto(Trip trip) {
 		this.tripId = trip.getTripId();
 		this.tripName = trip.getTripName();

@@ -5,9 +5,8 @@ import org.springframework.data.domain.Sort;
 
 public class TripRequestDto extends PageRequest {
 
-	int page = 1;
-	int size = 10;
-	Sort sort;
+	private static final long serialVersionUID = -6214974221063831396L;
+
 	/**
 	 * Creates a new {@link PageRequest} with sort parameters applied.
 	 *

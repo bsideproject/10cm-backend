@@ -2,17 +2,19 @@ package com.bside.someday.error;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.bside.someday.error.exception.InvalidParameterException;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bside.someday.error.dto.ErrorDto;
@@ -66,6 +68,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			);
 	}
 
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+		HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+		if (!ex.getBindingResult().hasErrors()) {
+			return super.handleMethodArgumentNotValid(ex, headers, status, request);
+		}
+
+		return ResponseEntity
+			.status(BAD_REQUEST)
+			.body(
+				new ErrorDto(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage(), "INVALID", BAD_REQUEST)
+			);
+	}
+
 	@ExceptionHandler(BusinessException.class)
 	protected ResponseEntity<ErrorDto> handleBusinessException(final BusinessException e,
 		final HttpServletRequest request) {
@@ -81,9 +98,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<ErrorDto> handleException(final Exception e,
 		final HttpServletRequest request) {
-		var errorMessage =
-			e.getCause().toString() + "\n" + e.getLocalizedMessage() + Arrays.toString(e.getStackTrace());
-		log.error("Exception -> {} | {}", e.getMessage(), errorMessage);
+		log.error("Exception -> {}", e.getMessage());
 		log.error("Request -> {} ", request.getRequestURL());
 		return ResponseEntity
 			.status(INTERNAL_SERVER_ERROR)

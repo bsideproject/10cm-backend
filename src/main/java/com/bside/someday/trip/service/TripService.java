@@ -1,7 +1,7 @@
 package com.bside.someday.trip.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,10 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
 import com.bside.someday.error.exception.trip.TripNotFoundException;
 import com.bside.someday.error.exception.trip.TripPlaceNotFoundException;
-import com.bside.someday.place.entity.Place;
 import com.bside.someday.place.repository.PlaceRepository;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
-import com.bside.someday.trip.dto.request.TripPlaceRequestDto;
 import com.bside.someday.trip.dto.response.TripDetailResponseDto;
 import com.bside.someday.trip.dto.response.TripResponseDto;
 import com.bside.someday.trip.entity.Trip;
@@ -91,6 +89,8 @@ public class TripService {
 	@Transactional
 	public List<TripEntry> getTripEntryList(TripDetailRequestDto requestDto) {
 
+		// 22.11.15 - 저장된 장소만 입력 가능하도록 변경
+		/*
 		List<TripEntry> entryList = new ArrayList<>();
 
 		for (TripPlaceRequestDto tripPlaceRequestDto : requestDto.getPlaceList()) {
@@ -103,8 +103,13 @@ public class TripService {
 			}
 			entryList.add(tripPlaceRequestDto.toTripEntity(place));
 		}
-
 		return entryList;
+		*/
+		return requestDto.getPlaceList().stream()
+			.map(tripPlaceRequestDto -> tripPlaceRequestDto.toTripEntity(
+				placeRepository.findById(tripPlaceRequestDto.getPlaceId())
+					.orElseThrow(TripPlaceNotFoundException::new)))
+			.collect(Collectors.toList());
 	}
 
 	/**
