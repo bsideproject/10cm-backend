@@ -18,7 +18,7 @@ public enum ErrorType {
 
 	FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "파일이 존재하지 않습니다.", "FIL001"),
 	FILE_UPLOAD_FAIL(HttpStatus.BAD_GATEWAY, "파일 업로드 중 오류가 발생하였습니다.", "FIL002"),
-
+	FILE_BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 파일 업로드 요청입니다.", "FIL003"),
 	NO_SUCH_ELEMENT(HttpStatus.NOT_FOUND, "존재하지 않는 데이터입니다.", "ERR001"),
 
 	INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 요청 파라미터입니다.", "ERR002"),

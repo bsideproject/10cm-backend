@@ -8,14 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
@@ -93,18 +90,12 @@ class UserControllerTest {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String contentJSON = objectMapper.writeValueAsString(requestDto);
 
-		MockMultipartFile file1 = new MockMultipartFile("file", "test_file1.txt",
-			MediaType.TEXT_PLAIN_VALUE, "test_file1".getBytes(StandardCharsets.UTF_8));
-
-		MockMultipartFile content = new MockMultipartFile("user", "user", MediaType.APPLICATION_JSON_VALUE,
-			contentJSON.getBytes(StandardCharsets.UTF_8));
-
 		//when
-		mvc.perform(multipart("/api/v1/user")
-				.file(file1)
-				.file(content)
-				.header(AUTHORIZATION, "Bearer " + accessToken))
-			.andExpect(status().isOk());
+		mvc.perform(put("/api/v1/user")
+			.header(AUTHORIZATION, "Bearer " + accessToken)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(contentJSON)
+		).andExpect(status().isOk());
 
 		//then
 		assertThat(userService.findUser(user1.getUserId()).getNickname()).isEqualTo(afterNickname);

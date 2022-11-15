@@ -1,4 +1,4 @@
-package com.bside.someday.storage.exception;
+package com.bside.someday.error.exception.storage;
 
 import static com.bside.someday.error.dto.ErrorType.*;
 
@@ -15,4 +15,7 @@ public class FileUploadFailException  extends BusinessException {
 		super(FILE_UPLOAD_FAIL);
 	}
 
+	public FileUploadFailException(String message) {
+		super(message, FILE_UPLOAD_FAIL);
+	}
 }

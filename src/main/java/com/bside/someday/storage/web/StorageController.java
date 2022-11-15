@@ -16,19 +16,31 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.bside.someday.common.dto.ResponseDto;
+import com.bside.someday.error.exception.oauth.UnAuthorizedException;
+import com.bside.someday.error.exception.storage.FileBadRequestException;
+import com.bside.someday.oauth.config.AuthUser;
+import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.storage.handler.ImageResourceHttpRequestHandler;
 import com.bside.someday.storage.service.StorageService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Api("Storage API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -39,6 +51,7 @@ public class StorageController {
 
 	private final ImageResourceHttpRequestHandler imageResourceHttpRequestHandler;
 
+	@ApiOperation("이미지 조회")
 	@GetMapping("/{fileName}")
 	public void storage(@PathVariable String fileName,
 		HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -48,9 +61,25 @@ public class StorageController {
 		request.setAttribute(ImageResourceHttpRequestHandler.ATTRIBUTE_FILE, file);
 
 		imageResourceHttpRequestHandler.handleRequest(request, response);
-
 	}
 
+	@ApiOperation("이미지 업로드")
+	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<?> upload(@AuthUser UserInfo userInfo,
+		@RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+
+		if (userInfo == null) {
+			throw new UnAuthorizedException();
+		}
+
+		if (multipartFile == null || multipartFile.isEmpty()) {
+			throw new FileBadRequestException("업로드할 이미지가 존재하지 않습니다.");
+		}
+
+		return ResponseDto.created(storageService.uploadFile(multipartFile).getUrl());
+	}
+
+	@ApiOperation("이미지 다운로드 조회")
 	@GetMapping("/{fileName}/download")
 	public ResponseEntity<Resource> download(@PathVariable String fileName) throws IOException {
 
