@@ -11,6 +11,7 @@ import com.bside.someday.error.exception.InvalidParameterException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -74,6 +75,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 		if (!ex.getBindingResult().hasErrors()) {
 			return super.handleMethodArgumentNotValid(ex, headers, status, request);
+		}
+
+		return ResponseEntity
+			.status(BAD_REQUEST)
+			.body(
+				new ErrorDto(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage(), "INVALID", BAD_REQUEST)
+			);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
+		WebRequest request) {
+		if (!ex.getBindingResult().hasErrors()) {
+			return super.handleBindException(ex, headers, status, request);
 		}
 
 		return ResponseEntity
