@@ -2,6 +2,7 @@ package com.bside.someday.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -61,7 +62,6 @@ public class SecurityConfig {
 			.csrf().disable()
 			.headers().frameOptions().disable()
 
-
 			.and()
 			.httpBasic().disable()
 			.formLogin().disable()
@@ -75,11 +75,8 @@ public class SecurityConfig {
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
 			.antMatchers("/api/v1/resources/**").permitAll()
-			.antMatchers("/api/v1/guest/**").permitAll()
+			.antMatchers(HttpMethod.GET, "/api/v1/trip/**").permitAll()
 			.antMatchers("/login/**").permitAll()
-
-			// 테스트용
-//			.antMatchers("/api/v1/place/**").permitAll()
 
 			// 설정 값 이외 URL
 			.anyRequest().authenticated()

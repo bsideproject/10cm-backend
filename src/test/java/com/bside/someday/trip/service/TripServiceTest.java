@@ -115,6 +115,34 @@ class TripServiceTest {
 		return Trip.createTrip(trip, user, tripEntries);
 	}
 
+	/**
+	 * 여행 테스트 데이터 생성
+	 */
+	private Trip createTestSharedTrip(Long tripId, User user) {
+		List<TripEntry> tripEntries = new ArrayList<>();
+
+		for (int i = 0; i < 5; i++) {
+
+			tripEntries.add(
+				TripEntry.builder()
+					.place(createTestPlace())
+					.placeSn(i + 1)
+					.visitDate(LocalDate.of(2022, 10, 28))
+					.build());
+		}
+
+		Trip trip = Trip.builder()
+			.tripId(tripId)
+			.tripName("여행 제목1")
+			.description("여행 내용1")
+			.startDate(LocalDate.of(2022, 10, 28))
+			.endDate(LocalDate.of(2022, 10, 29))
+			.shareYn("Y")
+			.build();
+
+		return Trip.createTrip(trip, user, tripEntries);
+	}
+
 	private User user;
 
 	@BeforeEach
@@ -244,6 +272,24 @@ class TripServiceTest {
 
 		//then
 		assertThat(exception).isInstanceOf(NotAllowAccessException.class);
+	}
+
+
+	@Test
+	void 여행_공유_상세조회_성공() {
+
+		//given
+		User user2 = createTestUser(2L);
+		Trip trip = createTestSharedTrip(1L, user);
+
+		when(tripRepository.findById(trip.getTripId())).thenReturn(Optional.of(trip));
+		when(userService.findOneById(user.getUserId())).thenReturn(user);
+
+		//when
+		TripDetailResponseDto response = tripService.getTrip(user.getUserId(), trip.getTripId());
+
+		//then
+		assertThat(response).usingRecursiveComparison().isEqualTo(new TripDetailResponseDto(trip));
 	}
 
 }

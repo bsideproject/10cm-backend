@@ -75,7 +75,7 @@ public class TripService {
 			throw new TripNotFoundException();
 		}
 
-		if (!trip.getCreatedBy().equals(user.getUserId())) {
+		if (!trip.getUser().getUserId().equals(user.getUserId())) {
 			throw new NotAllowAccessException();
 		}
 
@@ -130,6 +130,24 @@ public class TripService {
 
 		return new TripDetailResponseDto(trip, tripDetailRepository.findAllByTrip(trip));
 	}
+
+	/**
+	 * 여행 공유된 여행 조회
+	 * @param tripId 조회할 여행 아이디
+	 * @return TripDetailResponseDto
+	 */
+	@Transactional
+	public TripDetailResponseDto getSharedTrip(Long tripId) {
+
+		Trip trip = getTripById(tripId);
+
+		if ("N".equals(trip.getShareYn())) {
+			throw new NotAllowAccessException();
+		}
+
+		return new TripDetailResponseDto(trip, tripDetailRepository.findAllByTrip(trip));
+	}
+
 
 	/**
 	 * 여행 목록 검색
