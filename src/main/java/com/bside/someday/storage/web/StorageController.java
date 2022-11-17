@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bside.someday.common.dto.ResponseDto;
 import com.bside.someday.error.exception.oauth.UnAuthorizedException;
-import com.bside.someday.error.exception.storage.FileBadRequestException;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.storage.entity.ImageData;
@@ -70,10 +69,6 @@ public class StorageController {
 
 		if (userInfo == null) {
 			throw new UnAuthorizedException();
-		}
-
-		if (multipartFile == null || multipartFile.isEmpty()) {
-			throw new FileBadRequestException("업로드할 이미지가 존재하지 않습니다.");
 		}
 
 		return ResponseDto.created(storageService.uploadFile(multipartFile).getUrl());

@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
+import com.bside.someday.error.exception.storage.FileBadRequestException;
 import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.error.exception.storage.FileNotFoundException;
 import com.bside.someday.error.exception.storage.FileUploadFailException;
@@ -36,8 +37,15 @@ public class StorageService {
 	@Value("${file.stored.path:/home}")
 	private String FILE_STORED_PATH;
 
+	@Value("${file.resources.domain:https://unzido.site}")
+	private String FILE_SERVER_DOMAIN;
+
 	@Transactional
 	public ImageData uploadFile(MultipartFile file) {
+
+		if (file == null || file.isEmpty()) {
+			throw new FileBadRequestException("업로드할 이미지가 존재하지 않습니다.");
+		}
 
 		String name = getUUIDFileName(file.getOriginalFilename());
 
@@ -54,16 +62,14 @@ public class StorageService {
 			throw new FileUploadFailException();
 		}
 
-		ImageData imageData = storageRepository.save(ImageData.builder()
+		return storageRepository.save(ImageData.builder()
 			.name(name)
 			.originalName(file.getOriginalFilename())
 			.type(file.getContentType())
 			.filePath(filePath)
 			.size(file.getSize())
+			.url(FILE_SERVER_DOMAIN + FILE_RESOURCE_URL + "/" + name)
 			.build());
-
-		return storageRepository.save(imageData).setUrl(FILE_RESOURCE_URL + "/" + name);
-
 	}
 
 	public File getFileByName(String name) {

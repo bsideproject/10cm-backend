@@ -143,21 +143,16 @@ class StorageControllerTest {
 	@Test
 	void 파일_업로드_성공() throws Exception {
 
-		//given
 		String content = "asnldfkasdnflknasdkfasdfsdalnfkasdnflk";
 		MockMultipartFile file1 = new MockMultipartFile("file", "upload_test.txt",
 			MediaType.TEXT_PLAIN_VALUE, content.getBytes(StandardCharsets.UTF_8));
 
-		//when
-		MvcResult result = mvc.perform(
+		mvc.perform(
 			multipart("/api/v1/resources")
 				.file(file1)
 				.header(AUTHORIZATION, "Bearer " + accessToken)
-		).andExpect(status().is(201)).andReturn();
+		).andExpect(status().is(201));
 
-		//then
-		mvc.perform(get(result.getResponse().getContentAsString()))
-			.andExpect(status().is(200));
 	}
 
 	@Test
