@@ -58,6 +58,11 @@ public class TripController {
 	@ApiOperation("여행 상세 조회")
 	@GetMapping("/{tripId}")
 	public ResponseEntity<?> getTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId) {
+
+		if (userInfo == null) {
+			return ResponseDto.ok(tripService.getSharedTrip(tripId));
+		}
+
 		return ResponseDto.ok(tripService.getTrip(userInfo.getUserId(), tripId));
 	}
 

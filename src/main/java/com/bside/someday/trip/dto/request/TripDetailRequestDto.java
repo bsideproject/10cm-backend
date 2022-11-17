@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -37,10 +38,10 @@ public class TripDetailRequestDto {
 	@Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "여행 종료일 타입 오류입니다. (yyyy-MM-dd)")
 	private String endDate;
 
-	@Pattern(regexp = "Y|N", message = "여행 공유 여부 타입 오류입니다. (Y or N)")
+	@Pattern(regexp = "[YN]", message = "여행 공유 여부 타입 오류입니다. (Y or N)")
 	private String shareYn = "N";
 
-	private List<TripPlaceRequestDto> placeList;
+	private List<@Valid TripPlaceRequestDto> placeList;
 
 
 	public Trip toEntity() {
