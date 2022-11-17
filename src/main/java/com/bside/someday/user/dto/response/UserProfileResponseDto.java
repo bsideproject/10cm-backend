@@ -1,27 +1,29 @@
-package com.bside.someday.user.dto;
+package com.bside.someday.user.dto.response;
 
 import com.bside.someday.user.entity.User;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class UserProfileResponseDto {
 
 	@Schema(description = "사용자 아이디")
-	private final Long userId;
+	private Long userId;
 
 	@Schema(description = "사용자 이름")
-	private final String name;
+	private String name;
 
 	@Schema(description = "사용자 닉네임")
-	private final String nickname;
+	private String nickname;
 
 	@Schema(description = "사용자 이메일")
-	private final String email;
+	private String email;
 
 	@Schema(description = "프로필 사진 URL")
-	private final String profileImageUrl;
+	private String profileImageUrl;
 
 	public UserProfileResponseDto(User user) {
 		this.userId = user.getUserId();

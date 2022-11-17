@@ -49,6 +49,9 @@ public class User extends BaseTimeEntity {
 	@Enumerated(EnumType.STRING)
 	private SocialType socialType;
 
+	@Column(name = "profile_upload_yn", columnDefinition = "char(1) default 'N'")
+	private String profileUploadYn = "N";
+
 	@Builder
 	public User(Long userId, String name, String email, String nickname, String profileImage, String socialId,
 		SocialType socialType) {
@@ -61,13 +64,29 @@ public class User extends BaseTimeEntity {
 		this.socialType = socialType;
 	}
 
-	public void updateRegistrationId(String socialType) {
-		this.socialType = SocialType.valueOf(socialType);
-	}
-
 	public User update(String nickname, String profileImage) {
 		this.nickname = nickname;
 		this.profileImage = profileImage;
+		return this;
+	}
+
+	public User updateNickName(String nickname) {
+		this.nickname = nickname;
+		return this;
+	}
+	public User updateProfileImage(String profileImage) {
+		this.profileImage = profileImage;
+		this.profileUploadYn = "Y";
+		return this;
+	}
+
+	public User delete() {
+		this.name = null;
+		this.email = null;
+		this.nickname = null;
+		this.profileImage = null;
+		this.socialId = null;
+		this.socialType = null;
 		return this;
 	}
 
