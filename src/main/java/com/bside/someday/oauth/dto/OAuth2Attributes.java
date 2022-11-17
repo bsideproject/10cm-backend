@@ -52,8 +52,7 @@ public class OAuth2Attributes {
 
 		return OAuth2Attributes.builder()
 			.oauthId(attributes.get(nameAttributeKey).toString())
-			.nickname((String)profile.get("nickname"))
-			.name((String)profile.get("name"))
+			.name((String)profile.get("nickname"))
 			.email((String)account.get("email"))
 			.attributes(attributes)
 			.nameAttributeKey(nameAttributeKey)
@@ -61,12 +60,14 @@ public class OAuth2Attributes {
 			.build();
 	}
 
-	public User toEntity(String socialId, String registrationId, String nickname) {
+	public User toEntity(String socialId, String registrationId, String nickname, String name, String profileImage) {
 		return User.builder()
 			.email(email)
 			.socialId(socialId)
 			.socialType(SocialType.valueOf(registrationId.toUpperCase()))
 			.nickname(nickname)
+			.name(name)
+			.profileImage(profileImage)
 			.build();
 	}
 }

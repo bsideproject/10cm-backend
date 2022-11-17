@@ -13,9 +13,10 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
+import com.bside.someday.storage.service.StorageService;
 import com.bside.someday.user.dto.SocialType;
-import com.bside.someday.user.dto.UserProfileRequestDto;
-import com.bside.someday.user.dto.UserProfileResponseDto;
+import com.bside.someday.user.dto.request.UserProfileRequestDto;
+import com.bside.someday.user.dto.response.UserProfileResponseDto;
 import com.bside.someday.user.entity.User;
 import com.bside.someday.user.repository.UserRepository;
 
@@ -25,15 +26,18 @@ class UserServiceTest {
 	@Mock
 	private UserRepository userRepository;
 
+	@Mock
+	private StorageService storageService;
+
 	private UserService userService;
 
 	@BeforeEach
 	void setup() {
-		userService = new UserService(userRepository);
+		userService = new UserService(storageService, userRepository);
 	}
 
 	@Test
-	void 사용자_아이디로_조회() {
+	void 프로필_조회_성공() {
 
 		// given
 		User user1 = User.builder()
@@ -84,7 +88,7 @@ class UserServiceTest {
 		when(userRepository.save(any())).thenReturn(afterUser);
 
 		//when
-		UserProfileRequestDto requestDto = new UserProfileRequestDto(1L, afterNickname, afterImageProfile);
+		UserProfileRequestDto requestDto = new UserProfileRequestDto(afterNickname, afterImageProfile);
 		UserProfileResponseDto responseDto = userService.updateUser(1L, requestDto);
 
 		//then
@@ -94,12 +98,10 @@ class UserServiceTest {
 	}
 
 	@Test
-	void 사용자_탈퇴() {
+	void 사용자_탈퇴_실패() {
 
 		//given
 		when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-		//when
 
 		//then
 		assertThrows(UserNotFoundException.class, () -> userService.deleteUser(1L));
@@ -107,7 +109,7 @@ class UserServiceTest {
 	}
 
 	@Test
-	void 사용자_프로필_찾기() {
+	void 프로필_조회_실패() {
 
 		// given
 		User user1 = User.builder()
@@ -129,4 +131,5 @@ class UserServiceTest {
 		assertThrows(UserNotFoundException.class, () -> userService.findUser(2L));
 
 	}
+
 }
