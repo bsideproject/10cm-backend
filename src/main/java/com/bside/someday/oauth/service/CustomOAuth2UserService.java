@@ -70,19 +70,29 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			SocialType.valueOf(registrationId.toUpperCase()));
 
 		if (user.isPresent()) {
-			user.get().updateRegistrationId(registrationId.toUpperCase());
 			userMap.put("userId", user.get().getUserId());
 			userMap.put("email", user.get().getEmail());
+			userMap.put("name", user.get().getName());
+			userMap.put("nickname", user.get().getNickname());
+			userMap.put("profileImage", user.get().getProfileImage());
+
+			if ("N".equals(user.get().getProfileUploadYn())) {
+				userRepository.save(user.get().update(user.get().getNickname(), attributes.getProfileImage()));
+			}
+
 			return userMap;
 		}
 
 		String nickname = getRandomNickName(attributes);
 
 		User saveUser = userRepository.save(
-			attributes.toEntity(socialId, registrationId, nickname));
+			attributes.toEntity(socialId, registrationId, nickname, attributes.getName(), attributes.getProfileImage()));
 
 		userMap.put("userId", saveUser.getUserId());
 		userMap.put("email", saveUser.getEmail());
+		userMap.put("nickname", saveUser.getNickname());
+		userMap.put("name", saveUser.getName());
+		userMap.put("profileImage", saveUser.getProfileImage());
 
 		return userMap;
 	}
