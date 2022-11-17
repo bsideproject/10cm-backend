@@ -1,0 +1,16 @@
+
+spring:
+  profiles:
+    active: test # dev # prod
+
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher # Swagger path
+  jpa:
+    database: mysql
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
+        show_sql: true
+        format_sql: true
+        time_zone: Asia/Seoul
