@@ -1,4 +1,4 @@
-package com.bside.someday.storage.web;
+ package com.bside.someday.storage.web;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,7 +64,7 @@ public class StorageController {
 
 	@ApiOperation("이미지 업로드")
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<?> upload(@AuthUser UserInfo userInfo,
+	public ResponseEntity<String> upload(@AuthUser UserInfo userInfo,
 		@RequestPart(value = "file", required = false) MultipartFile multipartFile) {
 
 		if (userInfo == null) {
