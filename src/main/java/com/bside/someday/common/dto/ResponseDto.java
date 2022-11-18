@@ -25,9 +25,4 @@ public class ResponseDto<T> implements Serializable {
 			.build();
 	}
 
-	public static ResponseEntity<Void> conflict() {
-		return ResponseEntity
-			.status(HttpStatus.CONFLICT)
-			.build();
-	}
 }

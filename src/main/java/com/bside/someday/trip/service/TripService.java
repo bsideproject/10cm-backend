@@ -1,7 +1,7 @@
 package com.bside.someday.trip.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,27 +10,31 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
 import com.bside.someday.error.exception.trip.TripNotFoundException;
-import com.bside.someday.error.exception.trip.TripPlaceNotFoundException;
-import com.bside.someday.place.repository.PlaceRepository;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
+import com.bside.someday.trip.dto.request.TripDetails;
 import com.bside.someday.trip.dto.response.TripDetailResponseDto;
 import com.bside.someday.trip.dto.response.TripResponseDto;
 import com.bside.someday.trip.entity.Trip;
 import com.bside.someday.trip.entity.TripEntry;
-import com.bside.someday.trip.repository.TripDetailRepository;
+import com.bside.someday.trip.entity.TripPlace;
+import com.bside.someday.trip.repository.TripEntryRepository;
+import com.bside.someday.trip.repository.TripPlaceRepository;
 import com.bside.someday.trip.repository.TripRepository;
 import com.bside.someday.user.entity.User;
 import com.bside.someday.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TripService {
 
 	private final TripRepository tripRepository;
-	private final TripDetailRepository tripDetailRepository;
-	private final PlaceRepository placeRepository;
+	private final TripEntryRepository tripEntryRepository;
+
+	private final TripPlaceRepository tripPlaceRepository;
 	private final UserService userService;
 
 
@@ -52,6 +56,7 @@ public class TripService {
 	 */
 	@Transactional
 	public Long save(Long userId, TripDetailRequestDto requestDto) {
+
 		User user = userService.findOneById(userId);
 
 		return tripRepository.save(Trip.createTrip(requestDto.toEntity(), user, getTripEntryList(requestDto)))
@@ -71,45 +76,36 @@ public class TripService {
 		User user = userService.findOneById(userId);
 		Trip trip = getTripById(tripId);
 
-		if (!trip.getTripId().equals(requestDto.getTripId())) {
-			throw new TripNotFoundException();
-		}
-
 		if (!trip.getUser().getUserId().equals(user.getUserId())) {
 			throw new NotAllowAccessException();
 		}
 
 		// 수정 전 방문 장소 목록 삭제
-		tripDetailRepository.deleteAll(trip.getTripEntryList());
+		tripEntryRepository.deleteAll(trip.getTripEntryList());
+		trip.getTripEntryList().forEach(tripEntry -> tripPlaceRepository.deleteAll(tripEntry.getTripPlaceList()));
 
-		return tripRepository.save(Trip.createTrip(requestDto.toEntity(), user, getTripEntryList(requestDto)))
+		return tripRepository.save(Trip.updateTrip(tripId, requestDto.toEntity(), user, getTripEntryList(requestDto)))
 			.getTripId();
 	}
 
 	@Transactional
 	public List<TripEntry> getTripEntryList(TripDetailRequestDto requestDto) {
 
-		// 22.11.15 - 저장된 장소만 입력 가능하도록 변경
-		/*
-		List<TripEntry> entryList = new ArrayList<>();
+		List<List<TripDetails>> lists = requestDto.getTripDetails();
+		List<TripEntry> tripEntryList = new ArrayList<>();
 
-		for (TripPlaceRequestDto tripPlaceRequestDto : requestDto.getPlaceList()) {
-			Long placeId = tripPlaceRequestDto.getPlaceId();
-			Place place;
-			if (placeId != null) {
-				place = placeRepository.findById(placeId).orElseThrow(TripPlaceNotFoundException::new);
-			} else {
-				place = placeRepository.save(tripPlaceRequestDto.toEntity());
+		for (int i = 0; i < lists.size(); i++) {
+
+			List<TripPlace> tripPlaceList = new ArrayList<>();
+			List<TripDetails> tripDetailsList = lists.get(i);
+
+			for (int j = 0; j < tripDetailsList.size(); j++) {
+				tripPlaceList.add(tripDetailsList.get(j).toEntity(j + 1));
 			}
-			entryList.add(tripPlaceRequestDto.toTripEntity(place));
+			tripEntryList.add(TripEntry.createTripEntry(TripEntry.builder().entrySn(i + 1).build(), tripPlaceList));
 		}
-		return entryList;
-		*/
-		return requestDto.getPlaceList().stream()
-			.map(tripPlaceRequestDto -> tripPlaceRequestDto.toTripEntity(
-				placeRepository.findById(tripPlaceRequestDto.getPlaceId())
-					.orElseThrow(TripPlaceNotFoundException::new)))
-			.collect(Collectors.toList());
+
+		return tripEntryList;
 	}
 
 	/**
@@ -124,11 +120,11 @@ public class TripService {
 		Trip trip = getTripById(tripId);
 		User user = userService.findOneById(userId);
 
-		if ("N".equals(trip.getShareYn()) && !user.getUserId().equals(trip.getUser().getUserId())) {
+		if (!"Y".equals(trip.getShareYn()) && !user.getUserId().equals(trip.getUser().getUserId())) {
 			throw new NotAllowAccessException();
 		}
 
-		return new TripDetailResponseDto(trip, tripDetailRepository.findAllByTrip(trip));
+		return new TripDetailResponseDto(trip, tripEntryRepository.findAllByTrip(trip));
 	}
 
 	/**
@@ -145,7 +141,7 @@ public class TripService {
 			throw new NotAllowAccessException();
 		}
 
-		return new TripDetailResponseDto(trip, tripDetailRepository.findAllByTrip(trip));
+		return new TripDetailResponseDto(trip, tripEntryRepository.findAllByTrip(trip));
 	}
 
 
@@ -156,11 +152,11 @@ public class TripService {
 	 * @return List<TripResponseDto>
 	 */
 	@Transactional
-	public List<TripResponseDto> searchTrip(Long userId, Pageable pageable) {
+	public Page<TripResponseDto> searchTrip(Long userId, Pageable pageable) {
 
 		Page<Trip> tripPage = tripRepository.findAllByUserId(userId, pageable);
 
-		return tripPage.map(TripResponseDto::new).getContent();
+		return tripPage.map(TripResponseDto::new);
 	}
 
 	/**
@@ -177,7 +173,7 @@ public class TripService {
 			throw new NotAllowAccessException();
 		}
 
-		tripDetailRepository.deleteAll(trip.getTripEntryList());
+		tripEntryRepository.deleteAll(trip.getTripEntryList());
 	}
 
 
