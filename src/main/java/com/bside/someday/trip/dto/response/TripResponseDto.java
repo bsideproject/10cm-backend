@@ -1,6 +1,7 @@
 package com.bside.someday.trip.dto.response;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import com.bside.someday.trip.entity.Trip;
 
@@ -9,25 +10,30 @@ import lombok.Getter;
 @Getter
 public class TripResponseDto {
 
-	private final Long tripId;
+	private Long tripId;
 
-	private final String tripName;
+	private String name;
 
-	private final String description;
+	private String description;
 
-	private final LocalDate startDate;
+	private String startDate;
 
-	private final LocalDate endDate;
+	private String endDate;
 
-	private final String shareYn;
+	private String shareYn;
+
+	private LocalDateTime createdDate;
+
+	private LocalDateTime modifiedDate;
 
 	public TripResponseDto(Trip trip) {
 		this.tripId = trip.getTripId();
-		this.tripName = trip.getTripName();
+		this.name = trip.getTripName();
 		this.description = trip.getDescription();
-		this.startDate = trip.getStartDate();
-		this.endDate = trip.getEndDate();
+		this.startDate = trip.getStartDate().format(DateTimeFormatter.ISO_DATE);
+		this.endDate = trip.getEndDate().format(DateTimeFormatter.ISO_DATE);
 		this.shareYn = trip.getShareYn();
+		this.createdDate = trip.getCreatedDate();
+		this.modifiedDate = trip.getModifiedDate();
 	}
-
 }

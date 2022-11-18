@@ -1,24 +1,32 @@
 package com.bside.someday.trip.dto.response;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.bside.someday.place.dto.PlaceResponseDto;
-import com.bside.someday.place.entity.Place;
-import com.bside.someday.trip.entity.TripEntry;
+import com.bside.someday.trip.entity.TripPlace;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
-public class TripPlaceResponseDto extends PlaceResponseDto {
+@ToString
+public class TripPlaceResponseDto {
 
-	private final int placeSn;
+	private final String name;
 
-	private final LocalDate visitDate;
+	private final String description;
 
-	public TripPlaceResponseDto(TripEntry tripEntry, Place place) {
-		super(place, new String[] {});
-		this.placeSn = tripEntry.getPlaceSn();
-		this.visitDate = tripEntry.getVisitDate();
+	private final String address;
+
+	private final String addressDetail;
+
+	private final String longitude;
+
+	private final String latitude;
+
+	public TripPlaceResponseDto(TripPlace tripPlace) {
+		this.name = tripPlace.getName();
+		this.description = tripPlace.getDescription();
+		this.address = tripPlace.getAddress();
+		this.addressDetail = tripPlace.getAddressDetail();
+		this.longitude = tripPlace.getLongitude();
+		this.latitude = tripPlace.getLatitude();
 	}
 }

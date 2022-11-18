@@ -1,8 +1,9 @@
 package com.bside.someday.trip.entity;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.Column;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,10 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 
 import com.bside.someday.common.entity.BaseEntity;
-import com.bside.someday.place.entity.Place;
+import com.bside.someday.error.exception.trip.TripInvalidParameterException;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,31 +34,37 @@ public class TripEntry extends BaseEntity {
 	@JoinColumn(name = "trip_id")
 	private Trip trip;
 
-	@Column
-	private int placeSn;
+	@OneToMany(mappedBy = "tripEntry", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<TripPlace> tripPlaceList = new ArrayList<>();
 
-	private LocalDate visitDate;
+	public static TripEntry createTripEntry(TripEntry tripEntry, List<TripPlace> tripPlaceList) {
 
-
-	@OneToOne
-	@JoinColumn(name = "place_id")
-	private Place place;
-
-	public TripEntry setTrip(Trip trip) {
-		this.trip = trip;
-
-		// 무한루프 방지
-		if (!trip.getTripEntryList().contains(this)) {
-			trip.getTripEntryList().add(this);
+		if (tripEntry == null) {
+			throw new TripInvalidParameterException("잘못된 요청입니다.(여행 엔트리 없음)");
 		}
-		return this;
+
+		tripPlaceList.forEach(tripEntry::addTripPlace);
+
+		return tripEntry;
 	}
 
+	public void addTripPlace(TripPlace tripPlace) {
+		this.tripPlaceList.add(tripPlace);
+
+		// 무한루프 방지
+		if (tripPlace.getTripEntry() != this) {
+			tripPlace.setTripEntry(this);
+		}
+	}
+	private int entrySn = 1;
+
 	@Builder
-	public TripEntry(Long tripEntryId, int placeSn, LocalDate visitDate, Place place) {
+	public TripEntry(Long tripEntryId, int entrySn) {
 		this.tripEntryId = tripEntryId;
-		this.placeSn = placeSn;
-		this.visitDate = visitDate;
-		this.place = place;
+		this.entrySn = entrySn;
+	}
+
+	public void setTrip(Trip trip) {
+		this.trip = trip;
 	}
 }

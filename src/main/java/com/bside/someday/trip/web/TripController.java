@@ -1,10 +1,9 @@
 package com.bside.someday.trip.web;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +15,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bside.someday.common.dto.PageDto;
 import com.bside.someday.common.dto.ResponseDto;
+import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
+import com.bside.someday.trip.dto.response.TripDetailResponseDto;
 import com.bside.someday.trip.dto.response.TripResponseDto;
 import com.bside.someday.trip.service.TripService;
 
@@ -39,43 +41,49 @@ public class TripController {
 
 	@ApiOperation("여행 목록 조회")
 	@GetMapping
-	public ResponseEntity<?> findTrip(@AuthUser UserInfo userInfo,
-		@PageableDefault(size = 12) Pageable pageable) {
-
-		List<TripResponseDto> responseDto = tripService.searchTrip(userInfo.getUserId(),
-			pageable);
-
-		return ResponseDto.ok(responseDto);
+	public ResponseEntity<PageDto<TripResponseDto>> findTrip(@AuthUser UserInfo userInfo,
+		@PageableDefault(size = 6, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+		if (userInfo == null) {
+			throw new UnAuthorizedException();
+		}
+		return PageDto.ok(tripService.searchTrip(userInfo.getUserId(), pageable));
 	}
 
 	@ApiOperation("여행 등록")
 	@PostMapping
-	public ResponseEntity<?> saveTrip(@AuthUser UserInfo userInfo,
+	public ResponseEntity<Long> saveTrip(@AuthUser UserInfo userInfo,
 		@Valid @RequestBody TripDetailRequestDto requestDto) {
+		if (userInfo == null) {
+			throw new UnAuthorizedException();
+		}
 		return ResponseDto.created(tripService.save(userInfo.getUserId(), requestDto));
 	}
 
 	@ApiOperation("여행 상세 조회")
 	@GetMapping("/{tripId}")
-	public ResponseEntity<?> getTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId) {
-
+	public ResponseEntity<TripDetailResponseDto> getTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId) {
 		if (userInfo == null) {
 			return ResponseDto.ok(tripService.getSharedTrip(tripId));
 		}
-
 		return ResponseDto.ok(tripService.getTrip(userInfo.getUserId(), tripId));
 	}
 
 	@ApiOperation("여행 상세 수정")
 	@PutMapping("/{tripId}")
-	public ResponseEntity<?> updateTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId,
+	public ResponseEntity<Long> updateTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId,
 		@Valid @RequestBody TripDetailRequestDto requestDto) {
+		if (userInfo == null) {
+			throw new UnAuthorizedException();
+		}
 		return ResponseDto.ok(tripService.update(userInfo.getUserId(), tripId, requestDto));
 	}
 
 	@ApiOperation("여행 삭제")
 	@DeleteMapping("/{tripId}")
 	public ResponseEntity<?> deleteTrip(@AuthUser UserInfo userInfo, @PathVariable Long tripId) {
+		if (userInfo == null) {
+			throw new UnAuthorizedException();
+		}
 		tripService.delete(userInfo.getUserId(), tripId);
 		return ResponseDto.ok(null);
 	}
