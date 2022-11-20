@@ -17,6 +17,12 @@ public class ErrorDto {
 		this.status = status.value();
 	}
 
+	public ErrorDto(String message, ErrorType type) {
+		this.message = message;
+		this.code = type.getCode();
+		this.status = type.getStatus().value();
+	}
+
 	public ErrorDto(ErrorType type) {
 		this.message = type.getMessage();
 		this.code = type.getCode();

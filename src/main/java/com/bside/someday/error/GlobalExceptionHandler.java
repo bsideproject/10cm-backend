@@ -101,7 +101,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntity
 			.status(ex.getErrorType().getStatus())
 			.body(
-				new ErrorDto(ex.getErrorType())
+				new ErrorDto(ex.getMessage(), ex.getErrorType())
 			);
 	}
 
