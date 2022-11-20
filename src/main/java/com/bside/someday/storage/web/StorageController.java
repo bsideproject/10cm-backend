@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -30,6 +30,7 @@ import com.bside.someday.common.dto.ResponseDto;
 import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
+import com.bside.someday.storage.dto.response.ImageResponseDto;
 import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.storage.handler.ImageResourceHttpRequestHandler;
 import com.bside.someday.storage.service.StorageService;
@@ -64,19 +65,20 @@ public class StorageController {
 
 	@ApiOperation("이미지 업로드")
 	@PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<String> upload(@AuthUser UserInfo userInfo,
-		@RequestPart(value = "file", required = false) MultipartFile multipartFile) {
+	public ResponseEntity<ImageResponseDto> upload(@AuthUser UserInfo userInfo,
+		@RequestParam(name = "file", required = false) MultipartFile multipartFile) {
 
 		if (userInfo == null) {
 			throw new UnAuthorizedException();
 		}
 
-		return ResponseDto.created(storageService.uploadFile(multipartFile).getUrl());
+		return ResponseDto.created(new ImageResponseDto(storageService.uploadFile(multipartFile)));
 	}
 
 	@ApiOperation("이미지 다운로드 조회")
 	@GetMapping("/{fileName}/download")
-	public ResponseEntity<Resource> download(@PathVariable String fileName) throws IOException {
+	public ResponseEntity<Resource> download(@PathVariable String fileName) throws
+		IOException {
 
 		ImageData imageData = storageService.findOneByName(fileName);
 

@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
 import com.bside.someday.error.exception.storage.FileBadRequestException;
+import com.bside.someday.error.exception.storage.FileProcessFailException;
 import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.error.exception.storage.FileNotFoundException;
 import com.bside.someday.error.exception.storage.FileUploadFailException;
 import com.bside.someday.storage.repository.StorageRepository;
+import com.nimbusds.common.contenttype.ContentType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,11 +44,18 @@ public class StorageService {
 	@Value("${file.resources.domain:https://unzido.site}")
 	private String FILE_SERVER_DOMAIN;
 
+	public final List<ContentType> FILE_IMAGE_CONTENT_TYPE_LIST = List.of(
+		ContentType.IMAGE_JPEG,
+		ContentType.IMAGE_PNG,
+		ContentType.IMAGE_GIF,
+		ContentType.IMAGE_APNG
+	);
+
 	@Transactional
 	public ImageData uploadFile(MultipartFile file) {
 
-		if (file == null || file.isEmpty()) {
-			throw new FileBadRequestException("업로드할 이미지가 존재하지 않습니다.");
+		if (!validateFile(file)) {
+			throw new FileBadRequestException();
 		}
 
 		String name = getUUIDFileName(file.getOriginalFilename());
@@ -72,9 +83,32 @@ public class StorageService {
 			.build());
 	}
 
+	public boolean validateFile(MultipartFile file) {
+
+		if (file == null || file.isEmpty()) {
+			throw new FileBadRequestException("업로드할 이미지가 존재하지 않습니다.");
+		}
+
+		String fileExt = Optional.ofNullable(file.getOriginalFilename())
+			.filter(f -> f.contains("."))
+			.map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1)).orElse("");
+
+		boolean isValidFileExt = FILE_IMAGE_CONTENT_TYPE_LIST.stream()
+			.filter(contentType -> contentType.getSubType().equals(fileExt))
+			.anyMatch(contentType -> contentType.getType().equals(file.getContentType()));
+
+		if (!isValidFileExt) {
+			log.error("파일 타입 오류로 업로드 실패(contentType:{}, ext:{})", file.getContentType(), fileExt);
+			throw new FileBadRequestException("이미지 파일만 업로드 가능합니다.");
+		}
+
+		return true;
+	}
+
+	@Transactional
 	public File getFileByName(String name) {
 
-		File file = new File(FILE_STORED_PATH + "/" + name);
+		File file = new File(findOneByName(name).getFilePath());
 
 		if (!file.exists() || !file.isFile()) {
 			throw new FileNotFoundException();
@@ -83,28 +117,29 @@ public class StorageService {
 		return file;
 	}
 
+	@Transactional
 	public ImageData findOneByName(String name) {
 		return storageRepository.findByName(name).orElseThrow(FileNotFoundException::new);
 	}
 
 	@Transactional
-	public void deleteFile(Long id, String name) {
+	public void deleteFile(Long userId, String name) {
 
 		ImageData imageData = findOneByName(name);
-		if (!Objects.equals(imageData.getCreatedBy(), id)) {
+		if (!Objects.equals(imageData.getCreatedBy(), userId)) {
 			throw new NotAllowAccessException();
 		}
 
 		storageRepository.delete(imageData);
 
-		File file = new File(FILE_STORED_PATH + "/" + name);
+		File file = new File(imageData.getFilePath());
 
 		if (!file.exists() || !file.isFile()) {
 			throw new FileNotFoundException();
 		}
 
 		if (!file.delete()) {
-			// TODO: 삭제 실패시 예외처리
+			throw new FileProcessFailException("파일 삭제 중 오류가 발생하였습니다.");
 		}
 	}
 

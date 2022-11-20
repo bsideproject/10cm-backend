@@ -2,8 +2,6 @@ package com.bside.someday.error;
 
 import static org.springframework.http.HttpStatus.*;
 
-import java.util.NoSuchElementException;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.bside.someday.error.exception.InvalidParameterException;
@@ -16,32 +14,19 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.bside.someday.error.dto.ErrorDto;
 import com.bside.someday.error.dto.ErrorType;
 import com.bside.someday.error.exception.BusinessException;
-import com.bside.someday.error.exception.oauth.TokenExpiredException;
-import com.bside.someday.error.exception.oauth.NotAllowAccessException;
-import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-
-	@ExceptionHandler({NoSuchElementException.class})
-	protected ResponseEntity<ErrorDto> handleNoSuchElementException(final BusinessException e,
-																	 final HttpServletRequest request) {
-		log.error("NoSuchElementException -> {}", e.toString());
-		log.error("Request url -> {}", request.getRequestURL());
-		return ResponseEntity
-				.status(e.getErrorType().getStatus())
-				.body(
-						new ErrorDto(e.getErrorType())
-				);
-	}
 
 	@ExceptionHandler({InvalidParameterException.class})
 	protected ResponseEntity<ErrorDto> handleInvalidParameterException(final InvalidParameterException e,
@@ -55,18 +40,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 								, e.getErrorType().getCode()
 								, e.getErrorType().getStatus())
 				);
-	}
-	@ExceptionHandler({TokenExpiredException.class, NotAllowAccessException.class,
-		UnAuthorizedException.class})
-	protected ResponseEntity<ErrorDto> handleAuthenticationException(final BusinessException e,
-		final HttpServletRequest request) {
-		log.error("AuthenticationException -> {}", e.toString());
-		log.error("Request url -> {}", request.getRequestURL());
-		return ResponseEntity
-			.status(e.getErrorType().getStatus())
-			.body(
-				new ErrorDto(e.getErrorType())
-			);
 	}
 
 	@Override
@@ -84,6 +57,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			);
 	}
 
+	/**
+	 * 바인드 예외 핸들링
+	 */
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status,
 		WebRequest request) {
@@ -98,22 +74,41 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			);
 	}
 
-	@ExceptionHandler(BusinessException.class)
-	protected ResponseEntity<ErrorDto> handleBusinessException(final BusinessException e,
+	/**
+	 * 파일 업로드 용량 초과 에러 핸들링
+	 */
+	@ExceptionHandler(MultipartException.class)
+	protected ResponseEntity<ErrorDto> handleSizeLimitException(final Exception ex,
 		final HttpServletRequest request) {
-		log.error("BusinessException -> {} ", e.toString());
+
+		if (ex instanceof MaxUploadSizeExceededException) {
+			return ResponseEntity
+				.status(BAD_REQUEST)
+				.body(
+					new ErrorDto(ErrorType.FILE_SIZE_LIMIT_EXCEEDED)
+				);
+		}
+
+		return handleException(ex, request);
+	}
+
+	@ExceptionHandler(BusinessException.class)
+	protected ResponseEntity<ErrorDto> handleBusinessException(final BusinessException ex,
+		final HttpServletRequest request) {
+
+		log.error("BusinessException -> {} ", ex.toString());
 		log.error("Request url -> {} ", request.getRequestURL());
 		return ResponseEntity
-			.status(e.getErrorType().getStatus())
+			.status(ex.getErrorType().getStatus())
 			.body(
-				new ErrorDto(e.getErrorType())
+				new ErrorDto(ex.getErrorType())
 			);
 	}
 
 	@ExceptionHandler(Exception.class)
-	protected ResponseEntity<ErrorDto> handleException(final Exception e,
+	protected ResponseEntity<ErrorDto> handleException(final Exception ex,
 		final HttpServletRequest request) {
-		log.error("Exception -> {}", e.getMessage());
+		log.error("Exception -> {}", ex.getMessage());
 		log.error("Request -> {} ", request.getRequestURL());
 		return ResponseEntity
 			.status(INTERNAL_SERVER_ERROR)

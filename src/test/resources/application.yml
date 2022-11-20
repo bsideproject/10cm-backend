@@ -14,3 +14,12 @@ spring:
         show_sql: true
         format_sql: true
         time_zone: Asia/Seoul
+
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+
+  servlet:
+    multipart:
+      max-file-size: 100KB
+      max-request-size: 100KB
