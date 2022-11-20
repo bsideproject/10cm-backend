@@ -5,6 +5,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.bside.someday.trip.entity.TripPlace;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @ApiModel(description = "여행 등록 또는 수정시 요청하는 장소 리스트")
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class TripDetails {
 
 	@NotBlank(message = "장소명이 입력되지 않았습니다.")
