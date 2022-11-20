@@ -48,8 +48,10 @@ public class StorageService {
 		ContentType.IMAGE_JPEG,
 		ContentType.IMAGE_PNG,
 		ContentType.IMAGE_GIF,
-		ContentType.IMAGE_APNG
+		ContentType.IMAGE_APNG,
+		new ContentType(ContentType.IMAGE_JPEG.getBaseType(), "jpg")
 	);
+
 
 	@Transactional
 	public ImageData uploadFile(MultipartFile file) {
@@ -91,11 +93,14 @@ public class StorageService {
 
 		String fileExt = Optional.ofNullable(file.getOriginalFilename())
 			.filter(f -> f.contains("."))
-			.map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1)).orElse("");
+			.map(f -> f.substring(file.getOriginalFilename().lastIndexOf(".") + 1))
+			.orElse("")
+			.toLowerCase();
 
 		boolean isValidFileExt = FILE_IMAGE_CONTENT_TYPE_LIST.stream()
-			.filter(contentType -> contentType.getSubType().equals(fileExt))
-			.anyMatch(contentType -> contentType.getType().equals(file.getContentType()));
+			.anyMatch(contentType -> contentType.getType().equals(file.getContentType()))
+			&& FILE_IMAGE_CONTENT_TYPE_LIST.stream()
+			.anyMatch(contentType -> contentType.getSubType().equals(fileExt));
 
 		if (!isValidFileExt) {
 			log.error("파일 타입 오류로 업로드 실패(contentType:{}, ext:{})", file.getContentType(), fileExt);
