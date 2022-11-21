@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Api("Place API")
+@Api(tags = "Place API")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
