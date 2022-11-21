@@ -10,12 +10,12 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 public class PlaceListResponseDto {
-    private int count;
+    private long count;
     private List<PlaceResponseDto> placeList;
 
     @Builder
-    public PlaceListResponseDto(List<PlaceResponseDto> placeList) {
-        this.count = placeList.size();
+    public PlaceListResponseDto(List<PlaceResponseDto> placeList, long count) {
+        this.count = count;
         this.placeList = placeList;
     }
 }
