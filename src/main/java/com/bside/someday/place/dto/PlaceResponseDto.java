@@ -18,7 +18,7 @@ public class PlaceResponseDto {
     private String description;
     private String longitude;
     private String latitude;
-    private Long imageId;
+    private String image;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
@@ -33,7 +33,7 @@ public class PlaceResponseDto {
         this.description = place.getDescription();
         this.longitude = place.getLongitude();
         this.latitude = place.getLatitude();
-        this.imageId = place.getImageId();
+        this.image = place.getImage();
         this.createdDate = place.getCreatedDate();
         this.modifiedDate = place.getModifiedDate();
     }

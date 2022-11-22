@@ -25,7 +25,7 @@ public class PlaceRequestDto {
     @NotNull(message = "latitude 필드는 필수입니다.")
     private String latitude;
 
-    private Long imageId;
+    private String image;
 
     private User user;///////////>?
 
@@ -39,7 +39,7 @@ public class PlaceRequestDto {
                 .description(description)
                 .longitude(longitude)
                 .latitude(latitude)
-                .imageId(imageId)
+                .image(image)
                 .user(user)
                 .build();
     }
@@ -54,7 +54,7 @@ public class PlaceRequestDto {
                 .description(description)
                 .longitude(longitude)
                 .latitude(latitude)
-                .imageId(imageId)
+                .image(image)
                 .user(user)
                 .build();
     }
