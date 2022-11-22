@@ -14,4 +14,6 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
     Page<Place> findAllByUser_UserId(Pageable pageable, Long userId);
 
     int deleteByIdAndUser_UserId(Long id, Long userId);
+
+    int countByUser_UserId(Long userId);
 }

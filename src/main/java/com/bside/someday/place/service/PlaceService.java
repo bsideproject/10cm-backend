@@ -75,7 +75,7 @@ public class PlaceService {
     public PlaceListResponseDto getAllPlace(Pageable pageable, UserInfo userInfo) {
 //        PageRequest pageRequest = PageRequest.of(page, size);
 
-        long count = placeRepository.count();
+        long count = placeRepository.countByUser_UserId(userInfo.getUserId());
         Page<Place> placePage = placeRepository.findAllByUser_UserId(pageable, userInfo.getUserId());
         List<PlaceResponseDto> placeList = new ArrayList<>();
         for(Place place : placePage){
