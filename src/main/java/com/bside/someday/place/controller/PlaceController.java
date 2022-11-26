@@ -56,9 +56,10 @@ public class PlaceController {
 //            @RequestParam String category,
 //            @RequestParam String keyword,
               @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
-              @AuthUser UserInfo userInfo) {
-        log.info("PlaceController.getAllPlace {}", userInfo);
-        return placeService.getAllPlace(pageable, userInfo);
+              @AuthUser UserInfo userInfo,
+              @RequestParam(required = false) String tag) {
+        log.info("PlaceController.getAllPlace {} {}", tag, userInfo);
+        return placeService.getAllPlace(pageable, userInfo, tag);
     }
 
     @ApiOperation("장소 수정")
