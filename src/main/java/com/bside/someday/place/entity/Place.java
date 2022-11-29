@@ -1,7 +1,5 @@
 package com.bside.someday.place.entity;
 
-import com.bside.someday.place.dto.PlaceRequestDto;
-import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
