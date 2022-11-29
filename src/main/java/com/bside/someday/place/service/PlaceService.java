@@ -73,16 +73,15 @@ public class PlaceService {
     }
 
     public PlaceListResponseDto getAllPlace(Pageable pageable, UserInfo userInfo, String tag) {
-//        PageRequest pageRequest = PageRequest.of(page, size);
-
         long count = 0L;
         Page<Place> placePage = null;
         if(tag == null) {
             count = placeRepository.countByUser_UserId(userInfo.getUserId());
             placePage = placeRepository.findAllByUser_UserId(pageable, userInfo.getUserId());
         }else {
-            count = placeRepository.countByUser_UserIdTag(userInfo.getUserId(), tag);
-            placePage = placeRepository.findAllByUser_UserIdTag(pageable, userInfo.getUserId(), tag);
+            List<Long> placeIdList = placeRepository.findByTagContains(userInfo.getUserId(), tag);
+            placePage = placeRepository.findByIdIn(pageable, placeIdList);
+            count = placeIdList.size();
         }
 
         List<PlaceResponseDto> placeList = new ArrayList<>();
