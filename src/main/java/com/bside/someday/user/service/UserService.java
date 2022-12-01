@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.bside.someday.common.util.ClientUtil;
 import com.bside.someday.error.exception.oauth.UserInvalidParameterException;
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
 import com.bside.someday.storage.service.StorageService;
@@ -22,6 +23,7 @@ public class UserService {
 
 	private final StorageService storageService;
 	private final UserRepository userRepository;
+	private final ClientUtil clientUtil;
 
 	@Transactional
 	public User findOneById(Long userId) {
@@ -40,7 +42,9 @@ public class UserService {
 
 	@Transactional
 	public void deleteUser(Long userId) {
-		userRepository.save(findOneById(userId).delete());
+		User user = findOneById(userId);
+		clientUtil.requestUnlink(user.getSocialId(), user.getSocialType());
+		userRepository.save(user.delete());
 	}
 
 	@Transactional

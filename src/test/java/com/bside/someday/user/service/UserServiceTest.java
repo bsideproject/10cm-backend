@@ -12,6 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.bside.someday.common.util.ClientUtil;
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
 import com.bside.someday.storage.service.StorageService;
 import com.bside.someday.user.dto.SocialType;
@@ -29,11 +30,14 @@ class UserServiceTest {
 	@Mock
 	private StorageService storageService;
 
+	@Mock
+	private ClientUtil clientUtil;
+
 	private UserService userService;
 
 	@BeforeEach
 	void setup() {
-		userService = new UserService(storageService, userRepository);
+		userService = new UserService(storageService, userRepository, clientUtil);
 	}
 
 	@Test

@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Random;
+// import java.util.Random;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
+// import org.springframework.util.StringUtils;
 
 import com.bside.someday.oauth.CustomOauth2User;
 import com.bside.someday.oauth.dto.OAuth2Attributes;
@@ -83,10 +83,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 			return userMap;
 		}
 
-		String nickname = getRandomNickName(attributes);
+		// String nickname = getRandomNickName(attributes);
 
 		User saveUser = userRepository.save(
-			attributes.toEntity(socialId, registrationId, nickname, attributes.getName(), attributes.getProfileImage()));
+			attributes.toEntity(socialId, registrationId, attributes.getName(), attributes.getName(), attributes.getProfileImage()));
 
 		userMap.put("userId", saveUser.getUserId());
 		userMap.put("email", saveUser.getEmail());
@@ -104,14 +104,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 		throw new IllegalArgumentException("현재 지원하지 않는 소셜 로그인입니다.");
 	}
 
-	private String getRandomNickName(OAuth2Attributes attributes) {
-
-		if (attributes != null && StringUtils.hasText(attributes.getNickname())) {
-			return attributes.getNickname();
-		}
-
-		Random random = new Random();
-		random.setSeed(System.currentTimeMillis());
-		return String.format("USER%d", random.nextInt(100_000));
-	}
+	// private String getRandomNickName(OAuth2Attributes attributes) {
+	//
+	// 	if (attributes != null && StringUtils.hasText(attributes.getNickname())) {
+	// 		return attributes.getNickname();
+	// 	}
+	//
+	// 	Random random = new Random();
+	// 	random.setSeed(System.currentTimeMillis());
+	// 	return String.format("USER%d", random.nextInt(100_000));
+	// }
 }

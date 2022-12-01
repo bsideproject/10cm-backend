@@ -6,11 +6,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import com.bside.someday.cache.token.TokenRedisCacheService;
+import com.bside.someday.common.util.ClientUtil;
 import com.bside.someday.common.util.CookieUtil;
 import com.bside.someday.error.exception.oauth.TokenExpiredException;
 import com.bside.someday.error.exception.oauth.TokenInvalidException;
+import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
 import com.bside.someday.oauth.dto.TokenDto;
 import com.bside.someday.user.entity.User;
@@ -26,6 +29,7 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final TokenRedisCacheService tokenRedisCacheService;
 	private final CookieUtil cookieUtil;
+	private final ClientUtil clientUtil;
 
 	public TokenDto refresh(HttpServletResponse response, String refreshToken) {
 
@@ -77,7 +81,15 @@ public class AuthService {
 	@Transactional
 	public void logout(String bearerHeader) {
 
+		if (!StringUtils.hasText(bearerHeader)) {
+			throw new UnAuthorizedException();
+		}
+
 		String accessToken = jwtTokenProvider.resolveToken(bearerHeader);
+
+		if (!jwtTokenProvider.validate(accessToken)) {
+			throw new TokenExpiredException();
+		}
 
 		Long userId = jwtTokenProvider.getUserId(accessToken);
 
@@ -85,7 +97,9 @@ public class AuthService {
 			tokenRedisCacheService.delete(userId);
 		}
 
-		// TODO: accessToken 인증되지 않도록 추가 구현
+		User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+		clientUtil.requestLogout(user.getSocialId(), user.getSocialType());
 
 	}
 }

@@ -20,6 +20,7 @@ import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.user.dto.request.UserNicknameRequestDto;
 import com.bside.someday.user.dto.request.UserProfileRequestDto;
+import com.bside.someday.user.dto.response.UserProfileResponseDto;
 import com.bside.someday.user.service.UserService;
 
 import io.swagger.annotations.Api;
@@ -38,7 +39,7 @@ public class UserController {
 
 	@ApiOperation("회원 프로필 조회")
 	@GetMapping
-	public ResponseEntity<?> findUser(@AuthUser UserInfo userInfo) {
+	public ResponseEntity<UserProfileResponseDto> findUser(@AuthUser UserInfo userInfo) {
 		if (userInfo == null) {
 			throw new UnAuthorizedException();
 		}
@@ -47,7 +48,7 @@ public class UserController {
 
 	@ApiOperation("회원 프로필 수정")
 	@PutMapping
-	public ResponseEntity<?> updateUser(@AuthUser UserInfo userInfo,
+	public ResponseEntity<UserProfileResponseDto> updateUser(@AuthUser UserInfo userInfo,
 		@Valid @RequestBody UserProfileRequestDto requestDto) {
 
 		if (userInfo == null) {
