@@ -6,25 +6,29 @@ import java.time.format.DateTimeFormatter;
 import com.bside.someday.trip.entity.Trip;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class TripResponseDto {
 
-	private Long tripId;
+	private final Long tripId;
 
-	private String name;
+	private final String name;
 
-	private String description;
+	private final String description;
 
-	private String startDate;
+	private final String startDate;
 
-	private String endDate;
+	private final String endDate;
 
-	private String shareYn;
+	private final String tripImageUrl;
 
-	private LocalDateTime createdDate;
+	private final String shareYn;
 
-	private LocalDateTime modifiedDate;
+	private final LocalDateTime createdDate;
+
+	private final LocalDateTime modifiedDate;
 
 	public TripResponseDto(Trip trip) {
 		this.tripId = trip.getTripId();
@@ -32,6 +36,7 @@ public class TripResponseDto {
 		this.description = trip.getDescription();
 		this.startDate = trip.getStartDate().format(DateTimeFormatter.ISO_DATE);
 		this.endDate = trip.getEndDate().format(DateTimeFormatter.ISO_DATE);
+		this.tripImageUrl = trip.getTripImageUrl();
 		this.shareYn = trip.getShareYn();
 		this.createdDate = trip.getCreatedDate();
 		this.modifiedDate = trip.getModifiedDate();

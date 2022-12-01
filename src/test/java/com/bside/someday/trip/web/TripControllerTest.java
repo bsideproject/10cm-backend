@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -39,6 +40,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.bside.someday.security.WithMockCustomUser;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
+import com.bside.someday.trip.dto.response.TripDetailResponseDto;
 import com.bside.someday.trip.entity.Trip;
 import com.bside.someday.trip.entity.TripEntry;
 import com.bside.someday.trip.entity.TripPlace;
@@ -108,12 +110,27 @@ class TripControllerTest {
 	@MethodSource("tripSuccessRequestParams")
 	void 여행_등록_성공(String requestJson) throws Exception {
 
-		mvc.perform(MockMvcRequestBuilders.post("/api/v1/trip")
+		//given
+		TripDetailRequestDto request = objectMapper.readValue(requestJson, TripDetailRequestDto.class);
+
+		//when
+		String resultId = mvc.perform(MockMvcRequestBuilders.post("/api/v1/trip")
 				.content(requestJson)
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(MockMvcResultMatchers.status().isCreated())
-			.andDo(MockMvcResultHandlers.print());
+			.andDo(MockMvcResultHandlers.print())
+			.andReturn().getResponse().getContentAsString(StandardCharsets.UTF_8);
 
+		TripDetailResponseDto result = tripService.getTrip(1L, Long.valueOf(resultId));
+
+		//then
+		assertThat(request.getName()).isEqualTo(result.getName());
+		assertThat(LocalDate.parse(request.getStartDate())).isEqualTo(result.getStartDate());
+		assertThat(LocalDate.parse(request.getEndDate())).isEqualTo(result.getEndDate());
+		assertThat(request.getTripImageUrl()).isEqualTo(result.getTripImageUrl());
+		assertThat(request.getDescription()).isEqualTo(result.getDescription());
+		assertThat("Y".equals(request.getShareYn()) ? "Y" : "N").isEqualTo(result.getShareYn());
+		assertThat(request.getTripDetails().size()).isEqualTo(result.getTripDetails().size());
 	}
 
 	@WithMockCustomUser
@@ -135,6 +152,7 @@ class TripControllerTest {
 	@Transactional
 	void 여행_수정_성공() throws Exception {
 
+		//given
 		Trip buildTrip = buildTestTrip("N");
 		Trip savedTrip = tripRepository.save(buildTrip);
 
@@ -168,6 +186,7 @@ class TripControllerTest {
 			+ "    ]\n"
 			+ "}";
 
+		//when
 		MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/api/v1/trip/" + savedTrip.getTripId())
 				.content(requestJSON)
 				.contentType(MediaType.APPLICATION_JSON))
@@ -177,6 +196,7 @@ class TripControllerTest {
 
 		TripDetailRequestDto requestDto = objectMapper.readValue(requestJSON, TripDetailRequestDto.class);
 
+		//then
 		assertThat(
 			tripService.getTripById(Long.parseLong(result.getResponse().getContentAsString())))
 			.usingRecursiveComparison()
@@ -184,7 +204,6 @@ class TripControllerTest {
 			.isEqualTo(
 				Trip.createTrip(requestDto.toEntity(), user,
 					tripService.getTripEntryList(requestDto)));
-
 	}
 
 	@Test
@@ -295,6 +314,7 @@ class TripControllerTest {
 					+ "    \"start_date\": \"2022-12-10\",\n"
 					+ "    \"end_date\": \"2022-12-12\",\n"
 					+ "    \"share_yn\": \"N\",\n"
+					+ "    \"trip_image_url\": \"http://t.c/t\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"
 					+ "            {\n"
@@ -360,6 +380,7 @@ class TripControllerTest {
 					+ "    \"start_date\": \"2022-12-10\",\n"
 					+ "    \"end_date\": \"2022-12-12\",\n"
 					+ "    \"share_yn\": \"N\",\n"
+					+ "    \"trip_image_url\": \"http://t.c/t\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"
 					+ "            \n"
@@ -380,6 +401,7 @@ class TripControllerTest {
 					+ "    \"start_date\": \"2022-12-10\",\n"
 					+ "    \"end_date\": \"2022-12-12\",\n"
 					+ "    \"share_yn\": \"N\",\n"
+					+ "    \"trip_image_url\": \"http://t.c/t\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"
 					+ "            {\n"
@@ -474,6 +496,7 @@ class TripControllerTest {
 					+ "    \"start_date\": \"2022-01-02\",\n"
 					+ "    \"end_date\": \"2022-01-03\",\n"
 					+ "    \"share_yn\": \"N\",\n"
+					+ "    \"trip_image_url\": \"\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"
 					+ "            {\n"

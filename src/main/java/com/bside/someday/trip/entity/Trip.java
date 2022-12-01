@@ -46,6 +46,9 @@ public class Trip extends BaseEntity {
 	@Column(length = 1000)
 	private String description;
 
+	@Column(length = 1000)
+	private String tripImageUrl;
+
 	private LocalDate startDate;
 
 	private LocalDate endDate;
@@ -103,11 +106,13 @@ public class Trip extends BaseEntity {
 	}
 
 	@Builder
-	public Trip(Long tripId, String tripName, String description, LocalDate startDate, LocalDate endDate,
+	public Trip(Long tripId, String tripName, String description, String tripImageUrl, LocalDate startDate,
+		LocalDate endDate,
 		String shareYn) {
 		this.tripId = tripId;
 		this.tripName = tripName;
 		this.description = description;
+		this.tripImageUrl = tripImageUrl;
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.shareYn = shareYn;

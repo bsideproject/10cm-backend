@@ -27,11 +27,14 @@ public class TripDetailResponseDto {
 	private final LocalDate endDate;
 
 	private final String shareYn;
+
+	private final String tripImageUrl;
+
 	private final List<List<TripPlaceResponseDto>> tripDetails = new ArrayList<>();
 
-	private LocalDateTime createdDate;
+	private final LocalDateTime createdDate;
 
-	private LocalDateTime modifiedDate;
+	private final LocalDateTime modifiedDate;
 
 	public TripDetailResponseDto(Trip trip, List<TripEntry> tripEntryList) {
 
@@ -52,6 +55,7 @@ public class TripDetailResponseDto {
 		this.startDate = trip.getStartDate();
 		this.endDate = trip.getEndDate();
 		this.shareYn = trip.getShareYn();
+		this.tripImageUrl = trip.getTripImageUrl();
 		this.createdDate = trip.getCreatedDate();
 		this.modifiedDate = trip.getModifiedDate();
 	}

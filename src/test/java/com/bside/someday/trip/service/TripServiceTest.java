@@ -275,6 +275,7 @@ class TripServiceTest {
 					+ "    \"description\": \"여행 메모\",\n"
 					+ "    \"start_date\": \"2022-12-10\",\n"
 					+ "    \"end_date\": \"2022-12-12\",\n"
+					+ "    \"trip_image_url\": \"http://c.t.c/t\",\n"
 					+ "    \"share_yn\": \"N\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"

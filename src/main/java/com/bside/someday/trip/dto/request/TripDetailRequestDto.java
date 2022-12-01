@@ -43,6 +43,8 @@ public class TripDetailRequestDto {
 	@Pattern(regexp = "[YN]", message = "여행 공유 여부 타입 오류입니다. (Y or N)")
 	private String shareYn = "N";
 
+	private String tripImageUrl;
+
 	@NotNull
 	private List<List<@Valid TripDetails>> tripDetails = new ArrayList<>();
 
@@ -50,6 +52,7 @@ public class TripDetailRequestDto {
 		return Trip.builder()
 			.tripName(name)
 			.description(description)
+			.tripImageUrl(tripImageUrl)
 			.startDate(LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE))
 			.endDate(LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE))
 			.shareYn(shareYn)
