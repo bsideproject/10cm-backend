@@ -2,7 +2,6 @@ package com.bside.someday.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -75,7 +74,7 @@ public class SecurityConfig {
 			.antMatchers("/swagger-resources/**", "/swagger-ui/**", "/v2/api-docs").permitAll()
 			.antMatchers("/api/v1/auth/**").permitAll()
 			.antMatchers("/api/v1/resources/**").permitAll()
-			.antMatchers(HttpMethod.GET, "/api/v1/trip/**").permitAll()
+			.antMatchers("/api/v1/trip/**").permitAll()
 			.antMatchers("/login/**").permitAll()
 
 			// 설정 값 이외 URL
@@ -100,4 +99,5 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.build();
 	}
+
 }
