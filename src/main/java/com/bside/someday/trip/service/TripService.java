@@ -81,8 +81,8 @@ public class TripService {
 		}
 
 		// 수정 전 방문 장소 목록 삭제
-		tripEntryRepository.deleteAll(trip.getTripEntryList());
 		trip.getTripEntryList().forEach(tripEntry -> tripPlaceRepository.deleteAll(tripEntry.getTripPlaceList()));
+		tripEntryRepository.deleteAll(trip.getTripEntryList());
 
 		return tripRepository.save(Trip.updateTrip(tripId, requestDto.toEntity(), user, getTripEntryList(requestDto)))
 			.getTripId();
@@ -173,7 +173,9 @@ public class TripService {
 			throw new NotAllowAccessException();
 		}
 
+		trip.getTripEntryList().forEach(tripEntry -> tripPlaceRepository.deleteAll(tripEntry.getTripPlaceList()));
 		tripEntryRepository.deleteAll(trip.getTripEntryList());
+		tripRepository.delete(trip);
 	}
 
 

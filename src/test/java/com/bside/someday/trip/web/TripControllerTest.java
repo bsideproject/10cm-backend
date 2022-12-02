@@ -251,6 +251,30 @@ class TripControllerTest {
 
 	}
 
+	@Test
+	@WithMockCustomUser
+	@Transactional
+	void 여행_삭제_성공() throws Exception {
+
+		//given
+		Trip testTrip = buildTestTrip("Y");
+		Trip savedTrip = tripRepository.save(testTrip);
+
+		//when
+		mvc.perform(MockMvcRequestBuilders.get("/api/v1/trip/" + savedTrip.getTripId()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(MockMvcResultHandlers.print());
+
+		mvc.perform(MockMvcRequestBuilders.delete("/api/v1/trip/" + savedTrip.getTripId()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(MockMvcResultHandlers.print());
+
+		//then
+		mvc.perform(MockMvcRequestBuilders.get("/api/v1/trip/" + savedTrip.getTripId()))
+			.andExpect(MockMvcResultMatchers.status().is4xxClientError())
+			.andDo(MockMvcResultHandlers.print());
+	}
+
 	/*
 	테스트 여행 빌드
 	 */
