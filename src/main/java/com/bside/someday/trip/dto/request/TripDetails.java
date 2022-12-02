@@ -31,6 +31,9 @@ public class TripDetails {
 	@Size(max = 1000, message = "주소 상세는 1000자 이내로 입력해주세요.")
 	private String addressDetail;
 
+	@Pattern(regexp = "^[0-9]{2,3}[-][0-9]{4}[-][0-9]{4}$", message = "올바르지 않은 형식의 전화번호 값이 입력되었습니다.")
+	private String phone;
+
 	@NotBlank
 	@Pattern(regexp = "^[0-9]*[.][0-9]*$", message = "올바르지 않은 형식의 좌표 값이 입력되었습니다.")
 	private String longitude;
@@ -49,6 +52,7 @@ public class TripDetails {
 			.latitude(this.latitude)
 			.address(this.address)
 			.addressDetail(this.addressDetail)
+			.phone(phone)
 			.build();
 	}
 

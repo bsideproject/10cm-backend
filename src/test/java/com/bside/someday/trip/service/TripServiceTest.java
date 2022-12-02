@@ -283,6 +283,7 @@ class TripServiceTest {
 					+ "                \"name\": \"장소명1-1\",\n"
 					+ "                \"address\": \"주소1-1\",\n"
 					+ "                \"address_detail\": \"상세주소1-1\",\n"
+					+ "                \"phone\": \"010-0000-0000\",\n"
 					+ "                \"longitude\": \"126.57102135769145\",\n"
 					+ "                \"latitude\": \"33.4507335638693\",\n"
 					+ "                \"description\": \"장소설명(옵션)\"\n"

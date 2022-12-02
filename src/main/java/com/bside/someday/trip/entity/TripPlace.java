@@ -34,6 +34,7 @@ public class TripPlace extends BaseEntity {
 	@Column(length = 500)
 	private String addressDetail;
 
+	@Column(length = 20)
 	private String phone;
 
 	@Column(length = 1000)
