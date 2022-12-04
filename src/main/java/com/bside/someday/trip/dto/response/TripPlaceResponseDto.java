@@ -9,6 +9,8 @@ import lombok.ToString;
 @ToString
 public class TripPlaceResponseDto {
 
+	private final String id;
+
 	private final String name;
 
 	private final String description;
@@ -24,6 +26,7 @@ public class TripPlaceResponseDto {
 	private final String latitude;
 
 	public TripPlaceResponseDto(TripPlace tripPlace) {
+		this.id = tripPlace.getPlaceUid();
 		this.name = tripPlace.getName();
 		this.description = tripPlace.getDescription();
 		this.address = tripPlace.getAddress();

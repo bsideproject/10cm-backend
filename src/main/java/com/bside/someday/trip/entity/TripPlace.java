@@ -25,6 +25,10 @@ public class TripPlace extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long tripPlaceId;
 
+	// 장소 고유 아이디
+	@Column(length = 20)
+	private String placeUid;
+
 	@Column(length = 300)
 	private String name;
 
@@ -55,11 +59,10 @@ public class TripPlace extends BaseEntity {
 	}
 
 	@Builder
-	public TripPlace(Long tripPlaceId, String name, String address, String addressDetail, String phone,
-		String description,
-		String longitude, String latitude, int placeSn) {
-
+	public TripPlace(Long tripPlaceId, String placeUid, String name, String address, String addressDetail, String phone,
+		String description, String longitude, String latitude, int placeSn) {
 		this.tripPlaceId = tripPlaceId;
+		this.placeUid = placeUid;
 		this.name = name;
 		this.address = address;
 		this.addressDetail = addressDetail;

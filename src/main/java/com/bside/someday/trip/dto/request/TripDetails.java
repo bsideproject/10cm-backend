@@ -18,6 +18,9 @@ import lombok.ToString;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class TripDetails {
 
+	@NotBlank(message = "장소 아이디가 입력되지 않았습니다.")
+	private String id;
+
 	@NotBlank(message = "장소명이 입력되지 않았습니다.")
 	@Size(max = 30, message = "장소명은 30자 이내로 입력해주세요.")
 	private String name;
@@ -46,13 +49,14 @@ public class TripDetails {
 
 		return TripPlace.builder()
 			.placeSn(placeSn)
+			.placeUid(this.id)
 			.name(this.name)
 			.description(this.description)
 			.longitude(this.longitude)
 			.latitude(this.latitude)
 			.address(this.address)
 			.addressDetail(this.addressDetail)
-			.phone(phone)
+			.phone(this.phone)
 			.build();
 	}
 
