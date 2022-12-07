@@ -20,6 +20,5 @@ public abstract class BaseTimeEntity {
     private LocalDateTime createdDate;
 
     @LastModifiedDate //수정될때 시간 자동저장
-    @Column(insertable = false, updatable = true)
     private LocalDateTime modifiedDate;
 }
