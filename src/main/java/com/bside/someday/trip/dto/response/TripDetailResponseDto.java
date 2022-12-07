@@ -30,6 +30,8 @@ public class TripDetailResponseDto {
 
 	private final String tripImageUrl;
 
+	private final String tripImageName;
+
 	private final List<List<TripPlaceResponseDto>> tripDetails = new ArrayList<>();
 
 	private final LocalDateTime createdDate;
@@ -56,6 +58,7 @@ public class TripDetailResponseDto {
 		this.endDate = trip.getEndDate();
 		this.shareYn = trip.getShareYn();
 		this.tripImageUrl = trip.getTripImageUrl();
+		this.tripImageName = trip.getTripImageName();
 		this.createdDate = trip.getCreatedDate();
 		this.modifiedDate = trip.getModifiedDate();
 	}
