@@ -208,6 +208,21 @@ class TripControllerTest {
 				Trip.createTrip(requestDto.toEntity(), user,
 					tripService.getTripEntryList(requestDto)));
 	}
+	@WithMockCustomUser
+	@Transactional
+	@ParameterizedTest(name = "{index} => requestJson={0}")
+	@MethodSource("tripFailRequestParams")
+	void 여행_수정_실패_파라미터오류(String requestJson) throws Exception {
+		//given
+		Trip buildTrip = buildTestTrip("N");
+		Trip savedTrip = tripRepository.save(buildTrip);
+
+		mvc.perform(MockMvcRequestBuilders.put("/api/v1/trip/" + savedTrip.getTripId())
+				.content(requestJson)
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(MockMvcResultMatchers.status().is4xxClientError())
+			.andDo(MockMvcResultHandlers.print());
+	}
 
 	@Test
 	@Transactional
@@ -438,6 +453,7 @@ class TripControllerTest {
 					+ "    \"end_date\": \"2022-12-12\",\n"
 					+ "    \"share_yn\": \"N\",\n"
 					+ "    \"trip_image_url\": \"http://t.c/t\",\n"
+					+ "    \"trip_image_name\": \"원본이미지명.png\",\n"
 					+ "    \"trip_details\":[\n"
 					+ "        [\n"
 					+ "            {\n"
@@ -445,6 +461,7 @@ class TripControllerTest {
 					+ "                \"name\": \"장소명1-1\",\n"
 					+ "                \"address\": \"주소1-1\",\n"
 					+ "                \"address_detail\": \"상세주소1-1\",\n"
+					+ "                \"phone\": \"02-000-0000\",\n"
 					+ "                \"longitude\": \"126.57102135769145\",\n"
 					+ "                \"latitude\": \"33.4507335638693\",\n"
 					+ "                \"description\": \"장소설명(옵션)\"\n"
@@ -774,6 +791,32 @@ class TripControllerTest {
 					+ "                \"address\": \"주소1-1\",\n"
 					+ "                \"address_detail\": \"상세주소1-1\",\n"
 					+ "                \"phone\": \"02-000-0000\",\n"
+					+ "                \"longitude\": \"126.57\",\n"
+					+ "                \"latitude\": \"33.450\",\n"
+					+ "                \"description\": \"장소설명(옵션)\"\n"
+					+ "            }\n"
+					+ "        ],\n"
+					+ "        [\n"
+					+ "\n"
+					+ "        ]\n"
+					+ "    ]\n"
+					+ "}"
+			),
+			Arguments.of(
+				"{\n"
+					+ "    \"name\": \"여행 제목\",\n"
+					+ "    \"description\": \"여행 메모\",\n"
+					+ "    \"start_date\": \"2022-01-02\",\n"
+					+ "    \"end_date\": \"2022-01-03\",\n"
+					+ "    \"share_yn\": \"N\",\n"
+					+ "    \"trip_details\":[\n"
+					+ "        [\n"
+					+ "            {\n"
+					+ "                \"id\": \"22212122\",\n"
+					+ "                \"name\": \"장소명1-1\",\n"
+					+ "                \"address\": \"주소1-1\",\n"
+					+ "                \"address_detail\": \"상세주소1-1\",\n"
+					+ "                \"phone\": \" \",\n" // 전화번호(010-0000-0000 형식)
 					+ "                \"longitude\": \"126.57\",\n"
 					+ "                \"latitude\": \"33.450\",\n"
 					+ "                \"description\": \"장소설명(옵션)\"\n"
