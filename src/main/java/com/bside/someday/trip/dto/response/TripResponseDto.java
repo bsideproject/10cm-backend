@@ -24,6 +24,8 @@ public class TripResponseDto {
 
 	private final String tripImageUrl;
 
+	private final String tripImageName;
+
 	private final String shareYn;
 
 	private final LocalDateTime createdDate;
@@ -37,6 +39,7 @@ public class TripResponseDto {
 		this.startDate = trip.getStartDate().format(DateTimeFormatter.ISO_DATE);
 		this.endDate = trip.getEndDate().format(DateTimeFormatter.ISO_DATE);
 		this.tripImageUrl = trip.getTripImageUrl();
+		this.tripImageName = trip.getTripImageName();
 		this.shareYn = trip.getShareYn();
 		this.createdDate = trip.getCreatedDate();
 		this.modifiedDate = trip.getModifiedDate();
