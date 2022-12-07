@@ -38,9 +38,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.bside.someday.common.dto.PageDto;
 import com.bside.someday.security.WithMockCustomUser;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
+import com.bside.someday.trip.dto.request.TripRequestDto;
 import com.bside.someday.trip.dto.response.TripDetailResponseDto;
+import com.bside.someday.trip.dto.response.TripResponseDto;
 import com.bside.someday.trip.entity.Trip;
 import com.bside.someday.trip.entity.TripEntry;
 import com.bside.someday.trip.entity.TripPlace;
@@ -256,16 +259,57 @@ class TripControllerTest {
 	@Transactional
 	void 여행_목록_조회_성공() throws Exception {
 
+		//given
 		List<Trip> tripList = new ArrayList<>();
 		for (int i = 0; i < 20; i++) {
 			tripList.add(tripRepository.save(buildTestTrip("N")));
 		}
 
-		mvc.perform(MockMvcRequestBuilders.get("/api/v1/trip"))
+		//when
+		MvcResult mvcResultt1 = mvc.perform(MockMvcRequestBuilders.get("/api/v1/trip"))
 			.andExpect(MockMvcResultMatchers.status().isOk())
-			.andDo(MockMvcResultHandlers.print());
+			.andDo(print()).andReturn();
 
-		//TODO: 페이징(정렬) 테스트 추가
+		String contentStr1 = mvcResultt1.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+		PageDto<TripResponseDto> result = objectMapper.readValue(contentStr1, PageDto.class);
+
+		//then
+		assertThat(result.getSize()).isEqualTo(TripRequestDto.DEFAULT_PAGE_SIZE);
+		assertThat(result.getPage()).isEqualTo(1);
+		assertThat(result.getTotalPages()).isEqualTo(
+			(int)Math.ceil(tripList.size() / (double)TripRequestDto.DEFAULT_PAGE_SIZE));
+	}
+
+	@Test
+	@WithMockCustomUser
+	@Transactional
+	void 여행_목록_조회_페이징_성공() throws Exception {
+
+		//given
+		List<Trip> tripList = new ArrayList<>();
+		for (int i = 0; i < 20; i++) {
+			tripList.add(tripRepository.save(buildTestTrip("N")));
+		}
+
+		//when
+		int page = 2;
+		MvcResult mvcResultt1 = mvc.perform(MockMvcRequestBuilders.get("/api/v1/trip")
+				.param("page", String.valueOf(page))
+				.param("sort", TripRequestDto.DEFAULT_SORT_PROPERTY, "asc")
+			)
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andDo(print()).andReturn();
+
+		String contentStr1 = mvcResultt1.getResponse().getContentAsString(StandardCharsets.UTF_8);
+
+		PageDto<TripResponseDto> result = objectMapper.readValue(contentStr1, PageDto.class);
+
+		//then
+		assertThat(result.getSize()).isEqualTo(TripRequestDto.DEFAULT_PAGE_SIZE);
+		assertThat(result.getPage()).isEqualTo(page);
+		assertThat(result.getTotalPages()).isEqualTo(
+			(int)Math.ceil(tripList.size() / (double)TripRequestDto.DEFAULT_PAGE_SIZE));
 
 	}
 

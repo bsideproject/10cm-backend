@@ -1,9 +1,11 @@
 package com.bside.someday.trip.web;
 
+import static com.bside.someday.trip.dto.request.TripRequestDto.*;
+import static org.springframework.data.domain.Sort.Direction.*;
+
 import javax.validation.Valid;
 
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +23,7 @@ import com.bside.someday.error.exception.oauth.UnAuthorizedException;
 import com.bside.someday.oauth.config.AuthUser;
 import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
+import com.bside.someday.trip.dto.request.TripRequestDto;
 import com.bside.someday.trip.dto.response.TripDetailResponseDto;
 import com.bside.someday.trip.dto.response.TripResponseDto;
 import com.bside.someday.trip.service.TripService;
@@ -42,7 +45,7 @@ public class TripController {
 	@ApiOperation("여행 목록 조회")
 	@GetMapping
 	public ResponseEntity<PageDto<TripResponseDto>> findTrip(@AuthUser UserInfo userInfo,
-		@PageableDefault(size = 6, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable) {
+		@PageableDefault(size = TripRequestDto.DEFAULT_PAGE_SIZE, sort = DEFAULT_SORT_PROPERTY, direction = DESC) Pageable pageable) {
 		if (userInfo == null) {
 			throw new UnAuthorizedException();
 		}

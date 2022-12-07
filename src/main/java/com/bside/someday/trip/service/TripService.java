@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bside.someday.error.exception.oauth.NotAllowAccessException;
+import com.bside.someday.error.exception.trip.TripInvalidParameterException;
 import com.bside.someday.error.exception.trip.TripNotFoundException;
 import com.bside.someday.trip.dto.request.TripDetailRequestDto;
 import com.bside.someday.trip.dto.request.TripDetails;
@@ -154,7 +156,14 @@ public class TripService {
 	@Transactional
 	public Page<TripResponseDto> searchTrip(Long userId, Pageable pageable) {
 
-		Page<Trip> tripPage = tripRepository.findAllByUserId(userId, pageable);
+		if (pageable == null) {
+			throw new TripInvalidParameterException();
+		}
+
+		int page = pageable.getPageNumber() == 0 ? 0 : pageable.getPageNumber() - 1;
+
+		Page<Trip> tripPage = tripRepository.findAllByUserId(userId,
+			PageRequest.of(page, pageable.getPageSize(), pageable.getSort()));
 
 		return tripPage.map(TripResponseDto::new);
 	}

@@ -6,9 +6,17 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class PageDto<T> implements Serializable {
 
 	private static final long serialVersionUID = -8752244352831410009L;
@@ -28,21 +36,13 @@ public class PageDto<T> implements Serializable {
 	private PageDto(final Page<T> page) {
 		this(
 			page.getContent(),
-			page.getNumber(),
+			page.getNumber() + 1,
 			page.getSize(),
 			page.getTotalPages(),
 			page.isFirst(),
 			page.isLast()
 		);
-	}
 
-	PageDto(List<T> content, int number, int size, int totalPages, boolean first, boolean last) {
-		this.data = content;
-		this.page = number;
-		this.size = size;
-		this.totalPages = totalPages;
-		this.first = first;
-		this.last = last;
 	}
 
 	public static <T> ResponseEntity<PageDto<T>> ok(final Page<T> page) {
