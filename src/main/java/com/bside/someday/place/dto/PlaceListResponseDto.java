@@ -9,6 +9,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @Getter
+@ToString
 public class PlaceListResponseDto {
     private long count;
     private List<PlaceResponseDto> placeList;

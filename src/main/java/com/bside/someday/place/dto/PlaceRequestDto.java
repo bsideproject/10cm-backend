@@ -1,16 +1,14 @@
 package com.bside.someday.place.dto;
 
 import com.bside.someday.place.entity.Place;
-import com.bside.someday.storage.entity.ImageData;
 import com.bside.someday.user.entity.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
 @ToString
+@EqualsAndHashCode
+@NoArgsConstructor
 @Getter
 public class PlaceRequestDto {
     @NotNull(message = "name 필드는 필수입니다.")
@@ -59,20 +57,20 @@ public class PlaceRequestDto {
                 .build();
     }
 
-//    @Builder
-//    public PlaceRequestDto(String name, String address, String addressDetail,
-//                           String phone, String[] tag, String description,
-//                           Long imageId, String latitude, String longitude) {
-//        this.name = name;
-//        this.address = address;
-//        this.addressDetail = addressDetail;
-//        this.phone = phone;
-//        this.tag = tag;
-//        this.description = description;
-//        this.imageId = imageId;
-//        this.latitude = latitude;
-//        this.longitude = longitude;
-//    }
+    @Builder
+    public PlaceRequestDto(String name, String address, String addressDetail,
+                           String phone, String[] tag, String description,
+                           String image, String latitude, String longitude) {
+        this.name = name;
+        this.address = address;
+        this.addressDetail = addressDetail;
+        this.phone = phone;
+        this.tag = tag;
+        this.description = description;
+        this.image = image;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 
     public void addUser(User user) {
         this.user = user;

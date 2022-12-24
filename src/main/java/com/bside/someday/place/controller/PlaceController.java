@@ -13,9 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,7 +36,7 @@ public class PlaceController {
         if(bindingResult.hasErrors()) {
             throw new InvalidParameterException(bindingResult);
         }
-        Long placeId = placeService.addPlace(placeRequestDto, userInfo);
+        Long placeId = placeService.addPlace(placeRequestDto, userInfo.getUserId());
 
         return ResponseEntity.ok().body(new PlaceIdResponseDto(placeId));
     }
@@ -47,19 +45,17 @@ public class PlaceController {
     @GetMapping("/{placeId}")
     public PlaceResponseDto getPlace(@PathVariable Long placeId, @AuthUser UserInfo userInfo) {
         log.info("PlaceController.getPlace {} {}", placeId, userInfo);
-        return placeService.getPlace(placeId, userInfo);
+        return placeService.getPlace(placeId, userInfo.getUserId());
     }
 
     @ApiOperation("장소 목록 조회")
     @GetMapping
     public PlaceListResponseDto getAllPlace(
-//            @RequestParam String category,
-//            @RequestParam String keyword,
               @PageableDefault(size = 8, sort = "createdDate", direction = Sort.Direction.DESC) Pageable pageable,
               @AuthUser UserInfo userInfo,
               @RequestParam(required = false) String tag) {
         log.info("PlaceController.getAllPlace {} {}", tag, userInfo);
-        return placeService.getAllPlace(pageable, userInfo, tag);
+        return placeService.getAllPlace(pageable, userInfo.getUserId(), tag);
     }
 
     @ApiOperation("장소 수정")
@@ -72,7 +68,7 @@ public class PlaceController {
         if(bindingResult.hasErrors()) {
             throw new InvalidParameterException(bindingResult);
         }
-        placeService.modifyPlace(placeId, placeRequestDto, userInfo);
+        placeService.modifyPlace(placeId, placeRequestDto, userInfo.getUserId());
 
         return ResponseEntity.ok().body(new ResponseDto());
     }
@@ -81,7 +77,7 @@ public class PlaceController {
     @DeleteMapping("/{placeId}")
     public ResponseEntity removePlace(@PathVariable Long placeId, @AuthUser UserInfo userInfo) {
         log.info("PlaceController.removePlace {} {}", placeId, userInfo);
-        placeService.removePlace(placeId, userInfo);
+        placeService.removePlace(placeId, userInfo.getUserId());
 
         return ResponseEntity.ok().body(new ResponseDto());
     }
