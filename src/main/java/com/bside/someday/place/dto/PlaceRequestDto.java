@@ -1,7 +1,6 @@
 package com.bside.someday.place.dto;
 
 import com.bside.someday.place.entity.Place;
-import com.bside.someday.user.entity.User;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -25,9 +24,6 @@ public class PlaceRequestDto {
 
     private String image;
 
-    private User user;///////////>?
-
-
     public Place toEntity() {
         return Place.builder()
                 .name(name)
@@ -38,7 +34,6 @@ public class PlaceRequestDto {
                 .longitude(longitude)
                 .latitude(latitude)
                 .image(image)
-                .user(user)
                 .build();
     }
 
@@ -53,7 +48,6 @@ public class PlaceRequestDto {
                 .longitude(longitude)
                 .latitude(latitude)
                 .image(image)
-                .user(user)
                 .build();
     }
 
@@ -70,10 +64,6 @@ public class PlaceRequestDto {
         this.image = image;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public void addUser(User user) {
-        this.user = user;
     }
 
 }

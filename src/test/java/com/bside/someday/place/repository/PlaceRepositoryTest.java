@@ -128,8 +128,9 @@ class PlaceRepositoryTest {
         Long userId = user.getUserId();
         user = userRepository.findById(userId).get();
 
-        placeRequestDto.addUser(user);
-        Place savePlace = placeRepository.save(placeRequestDto.toEntity());
+        Place requestPlace = placeRequestDto.toEntity();
+        requestPlace.addUser(user);
+        Place savePlace = placeRepository.save(requestPlace);
         Long placeId = savePlace.getId();
 
         // when
@@ -150,8 +151,9 @@ class PlaceRepositoryTest {
         Long userId = user.getUserId();
         user = userRepository.findById(userId).get();
 
-        placeRequestDto.addUser(user);
-        Place savePlace = placeRepository.save(placeRequestDto.toEntity()); //기존 장소 등록
+        Place requestPlace = placeRequestDto.toEntity();
+        requestPlace.addUser(user);
+        Place savePlace = placeRepository.save(requestPlace); //기존 장소 등록
         Long placeId = savePlace.getId();
 
         // 수정할 장소
@@ -193,8 +195,9 @@ class PlaceRepositoryTest {
         Long userId = user.getUserId();
         user = userRepository.findById(userId).get();
 
-        placeRequestDto.addUser(user);
-        Place savePlace = placeRepository.save(placeRequestDto.toEntity());
+        Place requestPlace = placeRequestDto.toEntity();
+        requestPlace.addUser(user);
+        Place savePlace = placeRepository.save(requestPlace);
         Long placeId = savePlace.getId();
 
         // when

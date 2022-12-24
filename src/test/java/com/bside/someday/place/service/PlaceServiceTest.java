@@ -113,8 +113,10 @@ class PlaceServiceTest {
         when(userRepository.findById(requestUserId))
                 .thenReturn(Optional.of(user(requestUserId))); // 유저에 대한 Stub
 
-        placeRequestDto.addUser(user(requestUserId)); // 실제 메소드 호출해야 다음 when에서 정상적으로 동작하는데
-        when(placeRepository.save(placeRequestDto.toEntity()))
+        Place requestPlace = placeRequestDto.toEntity();
+        requestPlace.addUser(user(requestUserId));
+
+        when(placeRepository.save(requestPlace))
                 .thenReturn(place(requestPlaceId));
 
         when(tagRepository.findByName("카페"))
@@ -128,7 +130,6 @@ class PlaceServiceTest {
         Long placeId = placeService.addPlace(placeRequestDto, requestUserId);
 
         // then
-        assertThat(placeRequestDto.getUser()).isNotNull();
         assertThat(placeId).isEqualTo(1L);
 
         verify(tagRepository, times(3)).findByName(anyString());
@@ -188,8 +189,10 @@ class PlaceServiceTest {
 
         when(placeRepository.findByIdAndUser_UserId(placeId, userId)).thenReturn(Optional.of(place(placeId)));
         when(userRepository.findById(userId)).thenReturn(Optional.of(user(userId)));
-        modifyPlaceRequest.addUser(user(userId));
-        when(placeRepository.save(modifyPlaceRequest.toEntity(placeId)))
+
+        Place requestPlace = modifyPlaceRequest.toEntity(placeId);
+        requestPlace.addUser(user(userId));
+        when(placeRepository.save(requestPlace))
                 .thenReturn(Place.builder()
                     .id(placeId)
                     .name("이름수정")

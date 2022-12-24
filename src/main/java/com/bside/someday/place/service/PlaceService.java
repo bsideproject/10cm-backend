@@ -38,9 +38,10 @@ public class PlaceService {
     @Transactional
     public Long addPlace(PlaceRequestDto placeRequestDto, Long userId) {
 
-        placeRequestDto.addUser(getUser(userId));
+        Place place = placeRequestDto.toEntity();
+        place.addUser(getUser(userId));
         //place 추가
-        Long placeId = placeRepository.save(placeRequestDto.toEntity()).getId();
+        Long placeId = placeRepository.save(place).getId();
 
         // tag 추가
         addTag(placeRequestDto, placeId);
@@ -104,9 +105,10 @@ public class PlaceService {
         placeRepository.findByIdAndUser_UserId(placeId, userId)
                 .orElseThrow(() -> new NoSuchElementException());
 
-        placeRequestDto.addUser(getUser(userId));
+        Place requestPlace = placeRequestDto.toEntity(placeId);
+        requestPlace.addUser(getUser(userId));
         // 해당 place id로 내용 수정
-        Place place = placeRepository.save(placeRequestDto.toEntity(placeId));
+        Place place = placeRepository.save(requestPlace);
         log.info("수정한 장소 {}", place);
         // tag 수정
         placeTagRepository.deleteByPlaceId(placeId); // 매핑된 place tag 모두 삭제

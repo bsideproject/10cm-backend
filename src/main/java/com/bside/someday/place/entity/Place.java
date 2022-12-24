@@ -49,4 +49,8 @@ public class Place extends BaseTimeEntity {
         this.image = image;
     }
 
+    public void addUser(User user) {
+        this.user = user;
+    }
+
 }
