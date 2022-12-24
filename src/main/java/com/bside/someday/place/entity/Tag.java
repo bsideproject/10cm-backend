@@ -1,8 +1,6 @@
 package com.bside.someday.place.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +9,7 @@ import javax.persistence.Id;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Tag {
 

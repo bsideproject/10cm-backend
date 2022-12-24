@@ -13,12 +13,11 @@ import com.bside.someday.place.entity.BaseTimeEntity;
 import com.bside.someday.user.dto.SocialType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
+@EqualsAndHashCode
+@ToString
 @Table(name = "`user`")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

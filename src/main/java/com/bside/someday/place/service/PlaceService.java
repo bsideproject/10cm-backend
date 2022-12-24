@@ -2,7 +2,6 @@ package com.bside.someday.place.service;
 
 import com.bside.someday.error.exception.NoSuchElementException;
 import com.bside.someday.error.exception.oauth.UserNotFoundException;
-import com.bside.someday.oauth.dto.UserInfo;
 import com.bside.someday.place.dto.PlaceListResponseDto;
 import com.bside.someday.place.dto.PlaceRequestDto;
 import com.bside.someday.place.dto.PlaceResponseDto;
@@ -37,9 +36,9 @@ public class PlaceService {
     private final UserRepository userRepository;
 
     @Transactional
-    public Long addPlace(PlaceRequestDto placeRequestDto, UserInfo userInfo) {
+    public Long addPlace(PlaceRequestDto placeRequestDto, Long userId) {
 
-        placeRequestDto.addUser(getUser(userInfo));
+        placeRequestDto.addUser(getUser(userId));
         //place 추가
         Long placeId = placeRepository.save(placeRequestDto.toEntity()).getId();
 
@@ -48,8 +47,8 @@ public class PlaceService {
         return placeId;
     }
 
-    public PlaceResponseDto getPlace(Long placeId, UserInfo userInfo) {
-        Place place = placeRepository.findByIdAndUser_UserId(placeId, userInfo.getUserId())
+    public PlaceResponseDto getPlace(Long placeId, Long userId) {
+        Place place = placeRepository.findByIdAndUser_UserId(placeId, userId)
                 .orElseThrow(() -> new NoSuchElementException());
         List<String> tagList = getTagList(placeId);
 
@@ -61,25 +60,25 @@ public class PlaceService {
 
 
     @Transactional
-    public void removePlace(Long placeId, UserInfo userInfo) {
+    public void removePlace(Long placeId, Long userId) {
         //place tag 삭제
         placeTagRepository.deleteByPlaceId(placeId);
         //place 삭제
-        int count = placeRepository.deleteByIdAndUser_UserId(placeId, userInfo.getUserId());
+        int count = placeRepository.deleteByIdAndUser_UserId(placeId, userId);
 
         if(count < 1) {
             throw new NoSuchElementException();
         }
     }
 
-    public PlaceListResponseDto getAllPlace(Pageable pageable, UserInfo userInfo, String tag) {
+    public PlaceListResponseDto getAllPlace(Pageable pageable, Long userId, String tag) {
         long count = 0L;
         Page<Place> placePage = null;
         if(tag == null) {
-            count = placeRepository.countByUser_UserId(userInfo.getUserId());
-            placePage = placeRepository.findAllByUser_UserId(pageable, userInfo.getUserId());
+            count = placeRepository.countByUser_UserId(userId);
+            placePage = placeRepository.findAllByUser_UserId(pageable, userId);
         }else {
-            List<Long> placeIdList = placeRepository.findByTagContains(userInfo.getUserId(), tag);
+            List<Long> placeIdList = placeRepository.findByTagContains(userId, tag);
             placePage = placeRepository.findByIdIn(pageable, placeIdList);
             count = placeIdList.size();
         }
@@ -100,12 +99,12 @@ public class PlaceService {
     }
 
     @Transactional
-    public void modifyPlace(Long placeId, PlaceRequestDto placeRequestDto, UserInfo userInfo) {
+    public void modifyPlace(Long placeId, PlaceRequestDto placeRequestDto, Long userId) {
         // 해당 place id의 장소가 있는지 체크
-        placeRepository.findByIdAndUser_UserId(placeId, userInfo.getUserId())
+        placeRepository.findByIdAndUser_UserId(placeId, userId)
                 .orElseThrow(() -> new NoSuchElementException());
 
-        placeRequestDto.addUser(getUser(userInfo));
+        placeRequestDto.addUser(getUser(userId));
         // 해당 place id로 내용 수정
         Place place = placeRepository.save(placeRequestDto.toEntity(placeId));
         log.info("수정한 장소 {}", place);
@@ -115,8 +114,8 @@ public class PlaceService {
         addTag(placeRequestDto, placeId);
     }
 
-    private User getUser(UserInfo userInfo) {
-        return userRepository.findById(userInfo.getUserId())
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException());// userInfo로 user를 구함..
     }
 
