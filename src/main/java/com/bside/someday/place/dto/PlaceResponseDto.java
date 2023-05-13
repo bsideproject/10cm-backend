@@ -13,6 +13,7 @@ public class PlaceResponseDto {
     private String name;
     private String address;
     private String addressDetail;
+    private String roadAddress;
     private String phone;
     private String[] tag;
     private String description;
@@ -28,6 +29,7 @@ public class PlaceResponseDto {
         this.name = place.getName();
         this.address = place.getAddress();
         this.addressDetail = place.getAddressDetail();
+        this.roadAddress = place.getRoadAddress();
         this.phone = place.getPhone();
         this.tag = tag;
         this.description = place.getDescription();

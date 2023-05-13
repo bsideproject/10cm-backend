@@ -21,6 +21,8 @@ public class TripPlaceResponseDto {
 
 	private final String addressDetail;
 
+	private final String roadAddress;
+
 	private final String longitude;
 
 	private final String latitude;
@@ -31,6 +33,7 @@ public class TripPlaceResponseDto {
 		this.description = tripPlace.getDescription();
 		this.address = tripPlace.getAddress();
 		this.addressDetail = tripPlace.getAddressDetail();
+		this.roadAddress = tripPlace.getRoadAddress();
 		this.phone = tripPlace.getPhone();
 		this.longitude = tripPlace.getLongitude();
 		this.latitude = tripPlace.getLatitude();
