@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.bside.someday.trip.entity.Trip;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import io.swagger.annotations.ApiModel;
@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @ApiModel(description = "여행 정보를 등록하거나 수정할 때 사용")
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(value = SnakeCaseStrategy.class)
 public class TripDetailRequestDto {
 
 	@NotBlank(message = "여행 제목이 입력되지 않았습니다.")

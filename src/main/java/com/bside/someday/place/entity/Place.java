@@ -7,7 +7,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Getter
 @NoArgsConstructor
 @Entity
@@ -25,6 +25,7 @@ public class Place extends BaseTimeEntity {
     private String name;
     private String address;
     private String addressDetail;
+    private String roadAddress;
     private String phone;
     private String description;
     @NotNull
@@ -35,13 +36,15 @@ public class Place extends BaseTimeEntity {
     private String image;
 
     @Builder
-    public Place(Long id, User user, String name, String address, String addressDetail, String phone, String description,
-                 String longitude, String latitude, String image){
+    public Place(Long id, User user, String name, String address, String addressDetail, String roadAddress, String phone, String description,
+                 String longitude, String latitude, String image) {
+
         this.id = id;
         this.user = user;
         this.name = name;
         this.address = address;
         this.addressDetail = addressDetail;
+        this.roadAddress = roadAddress;
         this.phone = phone;
         this.description = description;
         this.longitude = longitude;

@@ -62,7 +62,7 @@ public class TripService {
 		User user = userService.findOneById(userId);
 
 		return tripRepository.save(Trip.createTrip(requestDto.toEntity(), user, getTripEntryList(requestDto)))
-			.getTripId();
+				.getTripId();
 	}
 
 	/***
@@ -87,7 +87,7 @@ public class TripService {
 		tripEntryRepository.deleteAll(trip.getTripEntryList());
 
 		return tripRepository.save(Trip.updateTrip(tripId, requestDto.toEntity(), user, getTripEntryList(requestDto)))
-			.getTripId();
+				.getTripId();
 	}
 
 	@Transactional
@@ -163,7 +163,7 @@ public class TripService {
 		int page = pageable.getPageNumber() == 0 ? 0 : pageable.getPageNumber() - 1;
 
 		Page<Trip> tripPage = tripRepository.findAllByUserId(userId,
-			PageRequest.of(page, pageable.getPageSize(), pageable.getSort()));
+				PageRequest.of(page, pageable.getPageSize(), pageable.getSort()));
 
 		return tripPage.map(TripResponseDto::new);
 	}

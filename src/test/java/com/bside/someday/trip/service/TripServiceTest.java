@@ -69,12 +69,12 @@ class TripServiceTest {
 	 */
 	private User createTestUser(Long userId) {
 		return User.builder()
-			.userId(userId)
-			.name("유저" + userId)
-			.nickname("닉네임" + userId)
-			.socialType(KAKAO)
-			.socialId("test")
-			.build();
+				.userId(userId)
+				.name("유저" + userId)
+				.nickname("닉네임" + userId)
+				.socialType(KAKAO)
+				.socialId("test")
+				.build();
 	}
 
 	private AtomicLong tripEntryId;
@@ -82,55 +82,55 @@ class TripServiceTest {
 
 	private Trip createTestTrip(Long tripId, String shareYn) {
 		return Trip.createTrip(Trip.builder()
-			.tripId(tripId)
-			.tripName("여행" + tripId)
-			.description("여행 내용" + tripId)
-			.startDate(LocalDate.of(2022, 1, 1))
-			.endDate(LocalDate.of(2022, 1, 2))
-			.shareYn(shareYn)
-			.build(), user, List.of(
-			TripEntry.createTripEntry(TripEntry.builder()
-					.tripEntryId(tripEntryId.getAndIncrement())
-					.entrySn(1)
-					.build(), List.of(
-					TripPlace.builder()
-						.tripPlaceId(tripPlaceId.getAndIncrement())
-						.placeSn(1)
-						.name("장소1")
-						.description("")
-						.address("")
-						.addressDetail("")
-						.latitude("1.1")
-						.longitude("1.1")
-						.build()
+				.tripId(tripId)
+				.tripName("여행" + tripId)
+				.description("여행 내용" + tripId)
+				.startDate(LocalDate.of(2022, 1, 1))
+				.endDate(LocalDate.of(2022, 1, 2))
+				.shareYn(shareYn)
+				.build(), user, List.of(
+				TripEntry.createTripEntry(TripEntry.builder()
+								.tripEntryId(tripEntryId.getAndIncrement())
+								.entrySn(1)
+								.build(), List.of(
+								TripPlace.builder()
+										.tripPlaceId(tripPlaceId.getAndIncrement())
+										.placeSn(1)
+										.name("장소1")
+										.description("")
+										.address("")
+										.addressDetail("")
+										.latitude("1.1")
+										.longitude("1.1")
+										.build()
+						)
+				),
+				TripEntry.createTripEntry(TripEntry.builder()
+								.tripEntryId(tripEntryId.getAndIncrement())
+								.entrySn(2)
+								.build(), List.of(
+								TripPlace.builder()
+										.tripPlaceId(tripPlaceId.getAndIncrement())
+										.placeSn(1)
+										.name("장소2")
+										.description("")
+										.address("")
+										.addressDetail("")
+										.latitude("1.2")
+										.longitude("1.2")
+										.build(),
+								TripPlace.builder()
+										.tripPlaceId(tripPlaceId.getAndIncrement())
+										.placeSn(2)
+										.name("장소3")
+										.description("")
+										.address("")
+										.addressDetail("")
+										.latitude("1.3")
+										.longitude("1.3")
+										.build()
+						)
 				)
-			),
-			TripEntry.createTripEntry(TripEntry.builder()
-					.tripEntryId(tripEntryId.getAndIncrement())
-					.entrySn(2)
-					.build(), List.of(
-					TripPlace.builder()
-						.tripPlaceId(tripPlaceId.getAndIncrement())
-						.placeSn(1)
-						.name("장소2")
-						.description("")
-						.address("")
-						.addressDetail("")
-						.latitude("1.2")
-						.longitude("1.2")
-						.build(),
-					TripPlace.builder()
-						.tripPlaceId(tripPlaceId.getAndIncrement())
-						.placeSn(2)
-						.name("장소3")
-						.description("")
-						.address("")
-						.addressDetail("")
-						.latitude("1.3")
-						.longitude("1.3")
-						.build()
-				)
-			)
 		));
 	}
 
@@ -192,12 +192,13 @@ class TripServiceTest {
 		PageRequest request = TripRequestDto.of(0, 10);
 		List<Trip> tripList = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			tripList.add(createTestTrip((long)i, "N"));
+			tripList.add(createTestTrip((long) i, "N"));
 		}
 
-		Page<Trip> tripPage = new PageImpl<>(tripList, PageRequest.of(request.getPageNumber(), request.getPageSize()), tripList.size());
-		when(tripRepository.findAllByUserId(user.getUserId(), request)).thenReturn(
-			new PageImpl<>(tripPage.stream().limit(request.getPageSize()).collect(Collectors.toList())));
+		List<Trip> resultList = tripList.stream().limit(request.getPageSize()).collect(Collectors.toList());
+		Page<Trip> resultPage = new PageImpl<>(resultList, PageRequest.of(request.getPageNumber(), request.getPageSize()), tripList.size());
+//		when(tripRepository.findAllByUserId(user.getUserId(), request)).thenReturn(resultPage);
+		doReturn(resultPage).when(this.tripRepository).findAllByUserId(any(), any());
 
 		//when
 		List<TripResponseDto> response = tripService.searchTrip(user.getUserId(), request).getContent();
@@ -205,10 +206,10 @@ class TripServiceTest {
 		//then
 		assertThat(response.size()).isEqualTo(request.getPageSize());
 		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(tripList.stream()
-				.limit(request.getPageSize())
-				.map(TripResponseDto::new)
-				.collect(Collectors.toList()));
+				.isEqualTo(tripList.stream()
+						.limit(request.getPageSize())
+						.map(TripResponseDto::new)
+						.collect(Collectors.toList()));
 	}
 
 
@@ -244,7 +245,7 @@ class TripServiceTest {
 
 		//then
 		assertThrows(NotAllowAccessException.class,
-			() -> tripService.getTrip(user2.getUserId(), trip.getTripId()));
+				() -> tripService.getTrip(user2.getUserId(), trip.getTripId()));
 	}
 
 
@@ -264,388 +265,388 @@ class TripServiceTest {
 
 		//then
 		assertThat(response).usingRecursiveComparison()
-			.isEqualTo(new TripDetailResponseDto(trip, trip.getTripEntryList()));
+				.isEqualTo(new TripDetailResponseDto(trip, trip.getTripEntryList()));
 	}
 
 	public static Stream<Arguments> tripSuccessRequestParams() {
 		return Stream.of(
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"trip_image_url\": \"http://c.t.c/t\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"id\": \"12341324\",\n"
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"phone\": \"010-0000-0000\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"id\": \"32323\",\n"
-					+ "                \"name\": \"장소명1-2\",\n"
-					+ "                \"address\": \"주소1-2\",\n"
-					+ "                \"address_detail\": \"상세주소1-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"id\": \"22222\",\n"
-					+ "                \"name\": \"장소명2-1\",\n"
-					+ "                \"address\": \"주소2-1\",\n"
-					+ "                \"address_detail\": \"상세주소2-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"id\": \"121212\",\n"
-					+ "                \"name\": \"장소명2-2\",\n"
-					+ "                \"address\": \"주소2-2\",\n"
-					+ "                \"address_detail\": \"상세주소2-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"id\": \"22212122\",\n"
-					+ "                \"name\": \"장소명3-1\",\n"
-					+ "                \"address\": \"주소3-1\",\n"
-					+ "                \"address_detail\": \"상세주소3-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"id\": \"22212123\",\n"
-					+ "                \"name\": \"장소명3-2\",\n"
-					+ "                \"address\": \"주소3-2\",\n"
-					+ "                \"address_detail\": \"상세주소3-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-1\",\n"
-					+ "                \"address\": \"주소2-1\",\n"
-					+ "                \"address_detail\": \"상세주소2-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-2\",\n"
-					+ "                \"address\": \"주소2-2\",\n"
-					+ "                \"address_detail\": \"상세주소2-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-3\",\n"
-					+ "                \"address\": \"주소2-3\",\n"
-					+ "                \"address_detail\": \"상세주소2-3\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명3-1\",\n"
-					+ "                \"address\": \"주소3-1\",\n"
-					+ "                \"address_detail\": \"상세주소3-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-10\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-2\",\n"
-					+ "                \"address\": \"주소1-2\",\n"
-					+ "                \"address_detail\": \"상세주소1-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-3\",\n"
-					+ "                \"address\": \"주소1-3\",\n"
-					+ "                \"address_detail\": \"상세주소1-3\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }   \n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-01-02\",\n"
-					+ "    \"end_date\": \"2022-01-03\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-2\",\n"
-					+ "                \"address\": \"주소1-2\",\n"
-					+ "                \"address_detail\": \"상세주소1-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-3\",\n"
-					+ "                \"address\": \"주소1-3\",\n"
-					+ "                \"address_detail\": \"상세주소1-3\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }   \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			)
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"trip_image_url\": \"http://c.t.c/t\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"id\": \"12341324\",\n"
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"phone\": \"010-0000-0000\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"id\": \"32323\",\n"
+								+ "                \"name\": \"장소명1-2\",\n"
+								+ "                \"address\": \"주소1-2\",\n"
+								+ "                \"address_detail\": \"상세주소1-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"id\": \"22222\",\n"
+								+ "                \"name\": \"장소명2-1\",\n"
+								+ "                \"address\": \"주소2-1\",\n"
+								+ "                \"address_detail\": \"상세주소2-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"id\": \"121212\",\n"
+								+ "                \"name\": \"장소명2-2\",\n"
+								+ "                \"address\": \"주소2-2\",\n"
+								+ "                \"address_detail\": \"상세주소2-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"id\": \"22212122\",\n"
+								+ "                \"name\": \"장소명3-1\",\n"
+								+ "                \"address\": \"주소3-1\",\n"
+								+ "                \"address_detail\": \"상세주소3-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"id\": \"22212123\",\n"
+								+ "                \"name\": \"장소명3-2\",\n"
+								+ "                \"address\": \"주소3-2\",\n"
+								+ "                \"address_detail\": \"상세주소3-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-1\",\n"
+								+ "                \"address\": \"주소2-1\",\n"
+								+ "                \"address_detail\": \"상세주소2-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-2\",\n"
+								+ "                \"address\": \"주소2-2\",\n"
+								+ "                \"address_detail\": \"상세주소2-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-3\",\n"
+								+ "                \"address\": \"주소2-3\",\n"
+								+ "                \"address_detail\": \"상세주소2-3\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명3-1\",\n"
+								+ "                \"address\": \"주소3-1\",\n"
+								+ "                \"address_detail\": \"상세주소3-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-10\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-2\",\n"
+								+ "                \"address\": \"주소1-2\",\n"
+								+ "                \"address_detail\": \"상세주소1-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-3\",\n"
+								+ "                \"address\": \"주소1-3\",\n"
+								+ "                \"address_detail\": \"상세주소1-3\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }   \n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-01-02\",\n"
+								+ "    \"end_date\": \"2022-01-03\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-2\",\n"
+								+ "                \"address\": \"주소1-2\",\n"
+								+ "                \"address_detail\": \"상세주소1-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-3\",\n"
+								+ "                \"address\": \"주소1-3\",\n"
+								+ "                \"address_detail\": \"상세주소1-3\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }   \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				)
 		);
 	}
 
 	public static Stream<Arguments> tripFailRequestParams() {
 		return Stream.of(
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"20221210\",\n" // 날짜타입오류(yyyy-MM-dd)
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n" // 여행기간 <> entry 개수
-					+ "        [\n"
-					+ "            \n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            \n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					// 필수 값 누락
-					//+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2022-12-10\",\n"
-					+ "    \"end_date\": \"2022-12-12\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-1\",\n"
-					+ "                \"address\": \"주소2-1\",\n"
-					+ "                \"address_detail\": \"상세주소2-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-2\",\n"
-					+ "                \"address\": \"주소2-2\",\n"
-					+ "                \"address_detail\": \"상세주소2-2\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            },\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명2-3\",\n"
-					+ "                \"address\": \"주소2-3\",\n"
-					+ "                \"address_detail\": \"상세주소2-3\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "            {\n"
-					+ "                \"name\": \"장소명3-1\",\n"
-					+ "                \"address\": \"주소3-1\",\n"
-					+ "                \"address_detail\": \"상세주소3-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2023-1-2\",\n"
-					+ "    \"end_date\": \"2022-1-3\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
-					// entry 필수 값 누락
-					// + "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"126.57102135769145\",\n"
-					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			),
-			Arguments.of(
-				"{\n"
-					+ "    \"name\": \"여행 제목\",\n"
-					+ "    \"description\": \"여행 메모\",\n"
-					+ "    \"start_date\": \"2023-1-2\",\n"
-					+ "    \"end_date\": \"2022-1-3\",\n"
-					+ "    \"share_yn\": \"N\",\n"
-					+ "    \"trip_details\":[\n"
-					+ "        [\n"
-					+ "            {\n"
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"20221210\",\n" // 날짜타입오류(yyyy-MM-dd)
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n" // 여행기간 <> entry 개수
+								+ "        [\n"
+								+ "            \n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            \n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								// 필수 값 누락
+								//+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2022-12-10\",\n"
+								+ "    \"end_date\": \"2022-12-12\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-1\",\n"
+								+ "                \"address\": \"주소2-1\",\n"
+								+ "                \"address_detail\": \"상세주소2-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-2\",\n"
+								+ "                \"address\": \"주소2-2\",\n"
+								+ "                \"address_detail\": \"상세주소2-2\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            },\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명2-3\",\n"
+								+ "                \"address\": \"주소2-3\",\n"
+								+ "                \"address_detail\": \"상세주소2-3\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "            {\n"
+								+ "                \"name\": \"장소명3-1\",\n"
+								+ "                \"address\": \"주소3-1\",\n"
+								+ "                \"address_detail\": \"상세주소3-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2023-1-2\",\n"
+								+ "    \"end_date\": \"2022-1-3\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
+								// entry 필수 값 누락
+								// + "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"126.57102135769145\",\n"
+								+ "                \"latitude\": \"33.4507335638693\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				),
+				Arguments.of(
+						"{\n"
+								+ "    \"name\": \"여행 제목\",\n"
+								+ "    \"description\": \"여행 메모\",\n"
+								+ "    \"start_date\": \"2023-1-2\",\n"
+								+ "    \"end_date\": \"2022-1-3\",\n"
+								+ "    \"share_yn\": \"N\",\n"
+								+ "    \"trip_details\":[\n"
+								+ "        [\n"
+								+ "            {\n"
 
-					+ "                \"name\": \"장소명1-1\",\n"
-					+ "                \"address\": \"주소1-1\",\n"
-					+ "                \"address_detail\": \"상세주소1-1\",\n"
-					+ "                \"longitude\": \"F126.57\",\n" // entry 경도, 위도 형식 오류 (숫자)
-					+ "                \"latitude\": \"33.450\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
-					+ "            }\n"
-					+ "        ],\n"
-					+ "        [\n"
-					+ "\n"
-					+ "        ]\n"
-					+ "    ]\n"
-					+ "}"
-			)
+								+ "                \"name\": \"장소명1-1\",\n"
+								+ "                \"address\": \"주소1-1\",\n"
+								+ "                \"address_detail\": \"상세주소1-1\",\n"
+								+ "                \"longitude\": \"F126.57\",\n" // entry 경도, 위도 형식 오류 (숫자)
+								+ "                \"latitude\": \"33.450\",\n"
+								+ "                \"description\": \"장소설명(옵션)\"\n"
+								+ "            }\n"
+								+ "        ],\n"
+								+ "        [\n"
+								+ "\n"
+								+ "        ]\n"
+								+ "    ]\n"
+								+ "}"
+				)
 		);
 	}
 }
