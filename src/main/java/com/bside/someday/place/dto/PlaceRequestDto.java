@@ -31,31 +31,33 @@ public class PlaceRequestDto {
 
     public Place toEntity() {
         return Place.builder()
-                .name(name)
-                .address(address)
-                .addressDetail(addressDetail)
-                .roadAddress(roadAddress)
-                .phone(phone)
-                .description(description)
-                .longitude(longitude)
-                .latitude(latitude)
-                .image(image)
-                .build();
+            .name(name)
+            .address(address)
+            .addressDetail(addressDetail)
+            .roadAddress(roadAddress)
+            .phone(phone)
+            .description(description)
+            .longitude(longitude)
+            .latitude(latitude)
+            .homepage(homepage)
+            .image(image)
+            .build();
     }
 
     public Place toEntity(Long id) {
         return Place.builder()
-                .id(id)
-                .name(name)
-                .address(address)
-                .addressDetail(addressDetail)
-                .roadAddress(roadAddress)
-                .phone(phone)
-                .description(description)
-                .longitude(longitude)
-                .latitude(latitude)
-                .image(image)
-                .build();
+            .id(id)
+            .name(name)
+            .address(address)
+            .addressDetail(addressDetail)
+            .roadAddress(roadAddress)
+            .phone(phone)
+            .description(description)
+            .longitude(longitude)
+            .latitude(latitude)
+            .image(image)
+            .homepage(homepage)
+            .build();
     }
 
     @Builder
