@@ -5,7 +5,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.bside.someday.trip.entity.TripPlace;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
 import io.swagger.annotations.ApiModel;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @ApiModel(description = "여행 등록 또는 수정시 요청하는 장소 리스트")
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(SnakeCaseStrategy.class)
 public class TripDetails {
 
 	@NotBlank(message = "장소 아이디가 입력되지 않았습니다.")
@@ -37,6 +37,9 @@ public class TripDetails {
 	@Size(max = 1000, message = "지번 주소는 1000자 이내로 입력해주세요.")
 	private String roadAddress;
 
+	@Size(max = 1000, message = "잘못된 홈페이지 주소가 입력되었습니다.")
+	private String homepage;
+
 	@Pattern(regexp = "^([0-9]{2,3}[-][0-9]{3,4}[-][0-9]{4}|)|([0-9]{4}[-][0-9]{4})|([0-9]{8,12})$", message = "올바르지 않은 형식의 전화번호 값이 입력되었습니다.")
 	private String phone;
 
@@ -50,17 +53,18 @@ public class TripDetails {
 
 	public TripPlace toEntity(int placeSn) {
 		return TripPlace.builder()
-				.placeSn(placeSn)
-				.placeUid(this.id)
-				.name(this.name)
-				.description(this.description)
-				.longitude(this.longitude)
-				.latitude(this.latitude)
-				.address(this.address)
-				.addressDetail(this.addressDetail)
-				.roadAddress(this.roadAddress)
-				.phone(this.phone)
-				.build();
+			.placeSn(placeSn)
+			.placeUid(this.id)
+			.name(this.name)
+			.description(this.description)
+			.longitude(this.longitude)
+			.latitude(this.latitude)
+			.address(this.address)
+			.addressDetail(this.addressDetail)
+			.roadAddress(this.roadAddress)
+			.phone(this.phone)
+			.homepage(this.homepage)
+			.build();
 	}
 
 }

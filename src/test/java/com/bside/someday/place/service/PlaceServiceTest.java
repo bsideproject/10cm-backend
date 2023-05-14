@@ -51,23 +51,28 @@ class PlaceServiceTest {
         String name = "롱플레이";
         String address = "제주특별자치도 제주시 특별자치도";
         String addressDetail = "동복로 44";
+        String roadAddress = "(지번) 구좌읍 동복리 1456-1";
         String[] tag = {"카페","맛집","제주"};
         String description = "에스프레소 4,000원\n에스프레소 폰파냐 4,500원\n아메리카노 5,500원\n카페 라떼 : 6,000원\n바닐라 라테 6,500원\n카푸치노 6,000원\n플랫화이트 6,000원\n초코 6,500원\n콜라 4,500원";
         String longitude = "126.710942515227";
         String latitude = "33.5530690361743";
         String image = "";
+        String phone = "070-4489-4004";
+        String homepage = "https://instagram.com/longplay_jeju";
 
         return PlaceRequestDto.builder()
-                .name(name)
-                .address(address)
-                .addressDetail(addressDetail)
-                .phone("")
-                .tag(tag)
-                .description(description)
-                .longitude(longitude)
-                .latitude(latitude)
-                .image(image)
-                .build();
+            .name(name)
+            .address(address)
+            .addressDetail(addressDetail)
+            .roadAddress(roadAddress)
+            .phone(phone)
+            .tag(tag)
+            .description(description)
+            .longitude(longitude)
+            .latitude(latitude)
+            .image(image)
+            .homepage(homepage)
+            .build();
     }
 
     private Place place(Long id) {
@@ -77,21 +82,25 @@ class PlaceServiceTest {
         String description = "에스프레소 4,000원\n에스프레소 폰파냐 4,500원\n아메리카노 5,500원\n카페 라떼 : 6,000원\n바닐라 라테 6,500원\n카푸치노 6,000원\n플랫화이트 6,000원\n초코 6,500원\n콜라 4,500원";
         String longitude = "126.710942515227";
         String latitude = "33.5530690361743";
+        String phone = "070-4489-4004";
+        String roadAddress = "(지번) 구좌읍 동복리 1456-1";
+        String homepage = "https://instagram.com/longplay_jeju";
         String image = "";
 
         return Place.builder()
-                .id(id)
-                .name(name)
-                .address(address)
-                .addressDetail(addressDetail)
-                .phone("")
-                .description(description)
-                .longitude(longitude)
-                .latitude(latitude)
-                .image(image)
-                .build();
+            .id(id)
+            .name(name)
+            .address(address)
+            .addressDetail(addressDetail)
+            .roadAddress(roadAddress)
+            .phone(phone)
+            .description(description)
+            .longitude(longitude)
+            .latitude(latitude)
+            .image(image)
+            .homepage(homepage)
+            .build();
     }
-
     private User user(Long id) {
         return User.builder()
                 .userId(id)

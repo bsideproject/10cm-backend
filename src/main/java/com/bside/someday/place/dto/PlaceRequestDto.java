@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @ToString
 @EqualsAndHashCode
@@ -24,8 +25,9 @@ public class PlaceRequestDto {
     private String longitude;
     @NotNull(message = "latitude 필드는 필수입니다.")
     private String latitude;
-
     private String image;
+    @Size(max = 1000, message = "잘못된 홈페이지 주소가 입력되었습니다.")
+    private String homepage;
 
     public Place toEntity() {
         return Place.builder()
@@ -57,9 +59,8 @@ public class PlaceRequestDto {
     }
 
     @Builder
-    public PlaceRequestDto(String name, String address, String addressDetail, String roadAddress,
-                           String phone, String[] tag, String description,
-                           String image, String latitude, String longitude) {
+    public PlaceRequestDto(String name, String address, String addressDetail, String roadAddress, String phone,
+        String[] tag, String description, String longitude, String latitude, String image, String homepage) {
         this.name = name;
         this.address = address;
         this.addressDetail = addressDetail;
@@ -67,9 +68,9 @@ public class PlaceRequestDto {
         this.phone = phone;
         this.tag = tag;
         this.description = description;
-        this.image = image;
-        this.latitude = latitude;
         this.longitude = longitude;
+        this.latitude = latitude;
+        this.image = image;
+        this.homepage = homepage;
     }
-
 }

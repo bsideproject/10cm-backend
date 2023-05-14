@@ -34,11 +34,11 @@ public class Place extends BaseTimeEntity {
     private String latitude;
 
     private String image;
+    private String homepage;
 
     @Builder
-    public Place(Long id, User user, String name, String address, String addressDetail, String roadAddress, String phone, String description,
-                 String longitude, String latitude, String image) {
-
+    public Place(Long id, User user, String name, String address, String addressDetail, String roadAddress,
+        String phone, String description, String longitude, String latitude, String image, String homepage) {
         this.id = id;
         this.user = user;
         this.name = name;
@@ -50,6 +50,7 @@ public class Place extends BaseTimeEntity {
         this.longitude = longitude;
         this.latitude = latitude;
         this.image = image;
+        this.homepage = homepage;
     }
 
     public void addUser(User user) {
