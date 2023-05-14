@@ -41,6 +41,8 @@ class PlaceControllerTest {
     @Mock
     private PlaceService placeService;
 
+    private ObjectMapper objectMapper;
+    
     private MockMvc mvc;
 
     @BeforeEach
@@ -48,6 +50,7 @@ class PlaceControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(placeController)
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
+        objectMapper = new ObjectMapper();
     }
 
     private PlaceRequestDto placeRequest() {
@@ -157,7 +160,7 @@ class PlaceControllerTest {
         ResultActions resultActions = mvc.perform(
                 post("/api/v1/place")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(placeRequestDto))
+                        .content(objectMapper.writeValueAsString(placeRequestDto))
         );
 
         // then
@@ -165,8 +168,8 @@ class PlaceControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andReturn();
-        PlaceIdResponseDto responseDto = new ObjectMapper()
-                .readValue(result.getResponse().getContentAsString(), PlaceIdResponseDto.class);
+        PlaceIdResponseDto responseDto = objectMapper.readValue(result.getResponse().getContentAsString(),
+            PlaceIdResponseDto.class);
         assertThat(responseDto.getId()).isEqualTo(1L);
     }
 
@@ -188,7 +191,7 @@ class PlaceControllerTest {
                 .andExpect(jsonPath("$.name").value("롱플레이"))
                 .andDo(print())
                 .andReturn();
-        PlaceResponseDto responseDto = new ObjectMapper()
+        PlaceResponseDto responseDto = objectMapper
                 .readValue(result.getResponse().getContentAsString(StandardCharsets.UTF_8), PlaceResponseDto.class);
         assertThat(responseDto.getName()).isEqualTo("롱플레이");
     }
@@ -214,7 +217,7 @@ class PlaceControllerTest {
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8);
 
-        PlaceListResponseDto placeListResponseDto = new ObjectMapper()
+        PlaceListResponseDto placeListResponseDto = objectMapper
                 .readValue(placeListAsString, PlaceListResponseDto.class);
         assertThat(placeListResponseDto.getPlaceList().size()).isEqualTo(2);
     }
@@ -230,7 +233,7 @@ class PlaceControllerTest {
         ResultActions resultActions = mvc.perform(
                 put("/api/v1/place/" + placeId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(new ObjectMapper().writeValueAsString(placeRequestDto))
+                        .content(objectMapper.writeValueAsString(placeRequestDto))
         );
 
         // then
@@ -240,7 +243,7 @@ class PlaceControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        ResponseDto responseDto = new ObjectMapper().readValue(responseDtoAsString, ResponseDto.class);
+        ResponseDto responseDto = objectMapper.readValue(responseDtoAsString, ResponseDto.class);
 
         assertThat(responseDto.getMessage()).isEqualTo("success");
         assertThat(responseDto.getCode()).isEqualTo("SUC01");
@@ -265,7 +268,7 @@ class PlaceControllerTest {
                 .getResponse()
                 .getContentAsString();
 
-        ResponseDto responseDto = new ObjectMapper().readValue(contentAsString, ResponseDto.class);
+        ResponseDto responseDto = objectMapper.readValue(contentAsString, ResponseDto.class);
 
         assertThat(responseDto.getMessage()).isEqualTo("success");
         assertThat(responseDto.getCode()).isEqualTo("SUC01");

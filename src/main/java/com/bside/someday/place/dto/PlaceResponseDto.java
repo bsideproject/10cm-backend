@@ -20,6 +20,7 @@ public class PlaceResponseDto {
     private String longitude;
     private String latitude;
     private String image;
+    private String homepage;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
@@ -36,23 +37,8 @@ public class PlaceResponseDto {
         this.longitude = place.getLongitude();
         this.latitude = place.getLatitude();
         this.image = place.getImage();
+        this.homepage = place.getHomepage();
         this.createdDate = place.getCreatedDate();
         this.modifiedDate = place.getModifiedDate();
     }
-//    @Builder
-//    public PlaceResponseDto(String name, String address, String addressDetail, String phone,
-//                            String[] tag, String description, String longitude, String latitude,
-//                            Long imageId, LocalDateTime createdDate, LocalDateTime modifiedDate) {
-//        this.name = name;
-//        this.address = address;
-//        this.addressDetail = addressDetail;
-//        this.phone = phone;
-//        this.tag = tag;
-//        this.description = description;
-//        this.longitude = longitude;
-//        this.latitude = latitude;
-//        this.imageId = imageId;
-//        this.createdDate = createdDate;
-//        this.modifiedDate = modifiedDate;
-//    }
 }

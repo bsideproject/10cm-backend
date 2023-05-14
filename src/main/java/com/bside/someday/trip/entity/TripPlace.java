@@ -51,6 +51,9 @@ public class TripPlace extends BaseEntity {
 
 	private String latitude;
 
+	@Column(length = 500)
+	private String homepage;
+
 	private int placeSn = 1;
 
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -63,7 +66,7 @@ public class TripPlace extends BaseEntity {
 
 	@Builder
 	public TripPlace(Long tripPlaceId, String placeUid, String name, String address, String addressDetail, String roadAddress,
-					 String phone, String description, String longitude, String latitude, int placeSn) {
+		String phone, String description, String longitude, String latitude, String homepage, int placeSn) {
 		this.tripPlaceId = tripPlaceId;
 		this.placeUid = placeUid;
 		this.name = name;
@@ -74,6 +77,7 @@ public class TripPlace extends BaseEntity {
 		this.description = description;
 		this.longitude = longitude;
 		this.latitude = latitude;
+		this.homepage = homepage;
 		this.placeSn = placeSn;
 	}
 

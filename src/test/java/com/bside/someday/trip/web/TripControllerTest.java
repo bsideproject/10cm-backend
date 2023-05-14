@@ -133,7 +133,7 @@ class TripControllerTest {
 		assertThat(request.getTripImageUrl()).isEqualTo(result.getTripImageUrl());
 		assertThat(request.getDescription()).isEqualTo(result.getDescription());
 		assertThat("Y".equals(request.getShareYn()) ? "Y" : "N").isEqualTo(result.getShareYn());
-		assertThat(request.getTripDetails().size()).isEqualTo(result.getTripDetails().size());
+		assertThat(request.getTripDetails().size()).isSameAs(result.getTripDetails().size());
 	}
 
 	@WithMockCustomUser
@@ -411,7 +411,9 @@ class TripControllerTest {
 					+ "                \"phone\": \"010-0000-0000\",\n"
 					+ "                \"longitude\": \"126.57102135769145\",\n"
 					+ "                \"latitude\": \"33.4507335638693\",\n"
-					+ "                \"description\": \"장소설명(옵션)\"\n"
+					+ "                \"description\": \"장소설명(옵션)\",\n"
+					+ "                \"road_address\": \"지번주소1-1\",\n"
+					+ "                \"homepage\": \"http://t.com/url\"\n"
 					+ "            },\n"
 					+ "            {\n"
 					+ "                \"id\": \"121212\",\n"
